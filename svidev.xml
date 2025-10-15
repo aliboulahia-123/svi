@@ -1,266 +1,289 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
 
-  <!-- ACCUEIL DÉPARTEMENT (menu plutôt que field) -->
+  <!-- ========================= -->
+  <!-- ACCUEIL + DEPARTEMENT (menus uniquement) -->
+  <!-- ========================= -->
   <form id="accueil">
     <block>
       <prompt bargein="true">
-        Bienvenue à l’Association Valentin Haüy.
-        Pour commencer, tapez le code du département :
-        7 pour Paris (75),
-        3 pour Haute-Garonne (31),
-        9 pour Hauts-de-Seine (92)…
-        Puis nous préciserons les unités.
+        Bienvenue à l Association Valentin Hauy.
+        Pour choisir votre departement en deux etapes :
+        tapez d abord le premier chiffre, puis le second.
+        Pour la demo : 7 puis 5 pour Paris, 3 puis 1 pour Haute Garonne, 9 puis 2 ou 1 pour Hauts de Seine Sud ou Nord.
       </prompt>
       <goto next="#menu_dizaine"/>
     </block>
   </form>
 
-  <!-- menu des dizaines -->
   <menu id="menu_dizaine" dtmf="true">
-    <prompt>
-      Premier chiffre du département : 7, 3, 9.
-    </prompt>
+    <prompt>Premier chiffre du departement. Tapez 7, 3, ou 9.</prompt>
     <choice dtmf="7" next="#d1_7"><prompt>7</prompt></choice>
     <choice dtmf="3" next="#d1_3"><prompt>3</prompt></choice>
     <choice dtmf="9" next="#d1_9"><prompt>9</prompt></choice>
-    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+    <noinput><prompt>Pas d entree. Repetez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Repetez.</prompt><reprompt/></nomatch>
   </menu>
 
-  <!-- chacune des formes pour préciser le second chiffre -->
-  <form id="d1_7">
-    <block>
-      <prompt>
-        Vous avez tapé 7. Tapez maintenant le second chiffre pour Paris (75) ou autre.
-      </prompt>
-      <goto next="#menu_unite_75"/>
-    </block>
-  </form>
+  <form id="d1_7"><block><prompt>Vous avez tape 7. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_7"/></block></form>
+  <form id="d1_3"><block><prompt>Vous avez tape 3. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_3"/></block></form>
+  <form id="d1_9"><block><prompt>Vous avez tape 9. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_9"/></block></form>
 
-  <form id="d1_3">
-    <block>
-      <prompt>
-        Vous avez tapé 3. Tapez maintenant le second chiffre pour Haute-Garonne (31)…
-      </prompt>
-      <goto next="#menu_unite_31"/>
-    </block>
-  </form>
-
-  <form id="d1_9">
-    <block>
-      <prompt>
-        Vous avez tapé 9. Tapez maintenant le second chiffre pour un département 92.
-      </prompt>
-      <goto next="#menu_unite_92"/>
-    </block>
-  </form>
-
-  <!-- unités / préciser département -->
-  <menu id="menu_unite_75" dtmf="true">
-    <prompt>Tapez 5 pour Paris (75).</prompt>
-    <choice dtmf="5" next="#announce_75"/><noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  <menu id="menu_unite_7" dtmf="true">
+    <prompt>Second chiffre. Tapez 5 pour Paris 75.</prompt>
+    <choice dtmf="5" next="#announce_75"/>
+    <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
   </menu>
 
+  <menu id="menu_unite_3" dtmf="true">
+    <prompt>Second chiffre. Tapez 1 pour Haute Garonne 31.</prompt>
+    <choice dtmf="1" next="#announce_31"/>
+    <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <menu id="menu_unite_9" dtmf="true">
+    <prompt>Second chiffre. Tapez 2 pour Hauts de Seine 92, ou 1 pour 91 (non renseigne ici).</prompt>
+    <choice dtmf="2" next="#announce_92"/>
+    <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <!-- ========================= -->
+  <!-- ANNONCES COMITE -->
+  <!-- ========================= -->
+
+  <!-- 75 PARIS -->
   <form id="announce_75">
     <block>
       <prompt>
-        Vous avez indiqué le département 75 — Comité de Paris.
-        Notre comité Paris propose des permanences, des ateliers, des services de matériel adapté.
-        Par exemple : téléphone du comité Paris : 01 40 44 95 94. :contentReference[oaicite:0]{index=0}
+        Departement 75. Comite de Paris et d Ile de France.
+        Pour continuer, vous entendrez un menu adapte aux besoins des personnes deficients visuelles.
       </prompt>
-      <goto next="#menu_principal_intro"/>
+      <goto next="#menu_principal_intro_75"/>
     </block>
   </form>
 
-  <menu id="menu_unite_31" dtmf="true">
-    <prompt>Tapez 1 pour Haute-Garonne (31).</prompt>
-    <choice dtmf="1" next="#announce_31"/><noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
-  </menu>
-
+  <!-- 31 HAUTE-GARONNE -->
   <form id="announce_31">
     <block>
       <prompt>
-        Département 31 — Comité de la Haute-Garonne à Toulouse.
-        Adresse : 7 rue Idrac. Tél. 05 61 62 44 45. :contentReference[oaicite:1]{index=1}
-        Services : bien-être, sport, boutique matériel spécialisé, bibliothèque sonore, ateliers, nouvelles technologies. :contentReference[oaicite:2]{index=2}
+        Departement 31. Comite de la Haute Garonne a Toulouse.
+        Adresse 7 rue Idrac, 31000 Toulouse. Telephone 05 61 62 44 45.
       </prompt>
-      <goto next="#menu_principal_intro"/>
+      <goto next="#menu_principal_intro_31"/>
     </block>
   </form>
 
-  <menu id="menu_unite_92" dtmf="true">
-    <prompt>Tapez 2 pour Hauts-de-Seine Sud, ou 1 pour Hauts-de-Seine Nord.</prompt>
-    <choice dtmf="2" next="#announce_92_sud"/><choice dtmf="1" next="#announce_92_nord"/>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
-  </menu>
-
-  <form id="announce_92_sud">
+  <!-- 92 HAUTS-DE-SEINE : NORD / SUD -->
+  <form id="announce_92">
     <block>
       <prompt>
-        Département 92 Sud — Comité Sud 92.
-        Secrétariat : 2, rue des Écoles, 92330 Sceaux. Tél : 01 55 52 06 06. :contentReference[oaicite:3]{index=3}
+        Departement 92. Pour choisir votre comite, tapez 1 pour Hauts de Seine Nord, ou 2 pour Hauts de Seine Sud.
       </prompt>
-      <goto next="#menu_principal_intro"/>
+      <goto next="#menu_92"/>
     </block>
   </form>
+
+  <menu id="menu_92" dtmf="true">
+    <prompt>92. 1 Nord, 2 Sud, 9 changer de departement.</prompt>
+    <choice dtmf="1" next="#announce_92_nord"/>
+    <choice dtmf="2" next="#announce_92_sud"/>
+    <choice dtmf="9" next="#accueil"/>
+    <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
 
   <form id="announce_92_nord">
     <block>
       <prompt>
-        Département 92 Nord — (info de démonstration).
-        Ce comité dessert la partie Nord des Hauts-de-Seine.
+        92 Nord. Permanences a Courbevoie et Gennevilliers. Vous allez acceder au menu adapte.
       </prompt>
-      <goto next="#menu_principal_intro"/>
+      <goto next="#menu_principal_intro_92N"/>
     </block>
   </form>
 
-  <!-- MENU PRINCIPAL (utilise ton menu qui fonctionne) -->
-  <form id="menu_principal_intro">
+  <form id="announce_92_sud">
     <block>
-      <prompt bargein="true">
-        Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
-        Appuyez sur dièse pour répéter.
+      <prompt>
+        92 Sud. Comite des Hauts de Seine Sud a Sceaux.
+        Vous allez acceder au menu adapte.
       </prompt>
-      <goto next="#menu_principal"/>
+      <goto next="#menu_principal_intro_92S"/>
     </block>
   </form>
 
-  <menu id="menu_principal" dtmf="true">
-    <prompt>Menu principal. 1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité, 9 quitter.</prompt>
-    <choice dtmf="1" next="#menu_sport_intro"><prompt>1 sport</prompt></choice>
-    <choice dtmf="2" next="#menu_loisir_intro"><prompt>2 loisir</prompt></choice>
-    <choice dtmf="3" next="#menu_sortie_intro"><prompt>3 sortie</prompt></choice>
-    <choice dtmf="4" next="#menu_sante_intro"><prompt>4 santé</prompt></choice>
-    <choice dtmf="5" next="#menu_actu_intro"><prompt>5 actualité</prompt></choice>
-    <choice dtmf="9" next="#fin"><prompt>9 quitter</prompt></choice>
-    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  <!-- ========================= -->
+  <!-- MENUS PRINCIPAUX PAR COMITE (meme rubriques) -->
+  <!-- ========================= -->
+
+  <!-- RUBRIQUES COMMUNES (1..9) :
+       1 Accueil & conseils
+       2 Mobilite & autonomie
+       3 Aides techniques & materiel
+       4 Bibliotheque Eole
+       5 Ateliers & nouvelles technologies
+       6 Droits & accompagnement
+       7 Actualites du comite
+       8 Coordonnees & permanences
+       9 Quitter
+  -->
+
+  <!-- PARIS -->
+  <form id="menu_principal_intro_75">
+    <block>
+      <prompt>
+        Menu principal Paris. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        4 bibliotheque Eole, 5 ateliers et nouvelles technologies,
+        6 droits et accompagnement, 7 actualites, 8 coordonnees et permanences, 9 quitter.
+      </prompt>
+      <goto next="#menu_principal_75"/>
+    </block>
+  </form>
+
+  <menu id="menu_principal_75" dtmf="true">
+    <prompt>Paris. 1 accueil, 2 mobilite, 3 aides techniques, 4 Eole, 5 ateliers, 6 droits, 7 actualites, 8 coordonnees, 9 quitter.</prompt>
+    <choice dtmf="1" next="#p75_accueil"/>
+    <choice dtmf="2" next="#p75_mobilite"/>
+    <choice dtmf="3" next="#p75_aides"/>
+    <choice dtmf="4" next="#p75_eole"/>
+    <choice dtmf="5" next="#p75_ateliers"/>
+    <choice dtmf="6" next="#p75_droits"/>
+    <choice dtmf="7" next="#p75_actu"/>
+    <choice dtmf="8" next="#p75_contacts"/>
+    <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <!-- Rubriques enrichies avec contenu réel -->
-
-  <form id="menu_sport_intro">
+  <form id="p75_accueil"><block><prompt>Accueil, information et conseil par le comite de Paris.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_mobilite"><block><prompt>Autonomie de la vie quotidienne et mobilite, ateliers dedies.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_aides"><block><prompt>Materiel specialise et conseils, demonstration d aides techniques.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_eole">
     <block>
       <prompt>
-        Vous êtes dans la rubrique sport.
-        Exemple : à Paris, l’AVH Paris propose le cécifoot. :contentReference[oaicite:4]{index=4}
-        Tapez 1 pour football, 2 pour tennis, 9 pour retour.
+        Bibliotheque Eole. Pour assistance, telephone 01 44 49 27 28.
+        Accueil telephonique lundi 14 heures a 16 heures 45, mardi a vendredi 10 a 12 heures puis 14 a 16 heures 45.
       </prompt>
-      <goto next="#menu_sport"/>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+  <form id="p75_ateliers"><block><prompt>Ateliers et nouvelles technologies. Exemple sport adapte comme le cecifoot a Paris.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_droits"><block><prompt>Information sociale et juridique, aide aux demarches.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_actu"><block><prompt>Actualites du comite de Paris, par exemple evenements culturels et salons du livre adapte.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+  <form id="p75_contacts"><block><prompt>Coordonnees du comite de Paris disponibles sur le site, accueil au siege a Paris 7e.</prompt><goto next="#menu_principal_intro_75"/></block></form>
+
+  <!-- HAUTE-GARONNE -->
+  <form id="menu_principal_intro_31">
+    <block>
+      <prompt>
+        Menu principal Haute Garonne. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
+        7 actualites, 8 coordonnees et permanences, 9 quitter.
+      </prompt>
+      <goto next="#menu_principal_31"/>
     </block>
   </form>
 
-  <menu id="menu_sport" dtmf="true">
-    <prompt>Sport. 1 football, 2 tennis, 9 retour.</prompt>
-    <choice dtmf="1" next="#sport_football"><prompt>1 football</prompt></choice>
-    <choice dtmf="2" next="#sport_tennis"><prompt>2 tennis</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  <menu id="menu_principal_31" dtmf="true">
+    <prompt>Haute Garonne. 1 accueil, 2 mobilite, 3 aides techniques, 4 Eole, 5 ateliers, 6 droits, 7 actualites, 8 coordonnees, 9 quitter.</prompt>
+    <choice dtmf="1" next="#p31_accueil"/>
+    <choice dtmf="2" next="#p31_mobilite"/>
+    <choice dtmf="3" next="#p31_aides"/>
+    <choice dtmf="4" next="#p31_eole"/>
+    <choice dtmf="5" next="#p31_ateliers"/>
+    <choice dtmf="6" next="#p31_droits"/>
+    <choice dtmf="7" next="#p31_actu"/>
+    <choice dtmf="8" next="#p31_contacts"/>
+    <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="sport_football">
+  <form id="p31_accueil"><block><prompt>Accueil et conseils au comite de Toulouse.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_mobilite"><block><prompt>Mobilite, bien etre et sport.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_aides"><block><prompt>Boutique et materiels specialises, bibliotheque sonore, materiel adapte.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_eole">
     <block>
       <prompt>
-        Le club AVH Paris Cécifoot est affilié à la Fédération française handisport. :contentReference[oaicite:5]{index=5}
+        Eole, la bibliotheque audio et braille de l association. Assistance par telephone 01 44 49 27 28.
       </prompt>
-      <goto next="#menu_sport_intro"/>
+      <goto next="#menu_principal_intro_31"/>
     </block>
   </form>
-  <form id="sport_tennis">
+  <form id="p31_ateliers"><block><prompt>Cours et ateliers : tandem, anglais, qi gong, zumba, braille, informatique adaptee.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_droits"><block><prompt>Accompagnement social et droits : information sur la prise en charge, dossiers, orientation vers les instances.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_actu"><block><prompt>Sorties culturelles et touristiques organisees par le comite.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+  <form id="p31_contacts"><block><prompt>Coordonnees : 7 rue Idrac, 31000 Toulouse. Telephone 05 61 62 44 45. Horaires d accueil indiques sur le site.</prompt><goto next="#menu_principal_intro_31"/></block></form>
+
+  <!-- 92 NORD -->
+  <form id="menu_principal_intro_92N">
     <block>
       <prompt>
-        (Contenu de démonstration) Actualités tennis AVH.
+        Menu principal 92 Nord. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
+        7 actualites, 8 coordonnees et permanences, 9 quitter.
       </prompt>
-      <goto next="#menu_sport_intro"/>
+      <goto next="#menu_principal_92N"/>
     </block>
   </form>
 
-  <form id="menu_loisir_intro">
-    <block>
-      <prompt>
-        Vous êtes dans la rubrique loisir.
-        L’AVH propose des ateliers, des sorties accessibles.
-        Tapez 1 pour ateliers, 2 pour jeux, 9 pour retour.
-      </prompt>
-      <goto next="#menu_loisir"/>
-    </block>
-  </form>
-  <menu id="menu_loisir" dtmf="true">
-    <prompt>Loisir. 1 ateliers, 2 jeux, 9 retour.</prompt>
-    <choice dtmf="1" next="#loisir_ateliers"><prompt>1 ateliers</prompt></choice>
-    <choice dtmf="2" next="#loisir_jeux"><prompt>2 jeux</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  <menu id="menu_principal_92N" dtmf="true">
+    <prompt>92 Nord. 1 accueil, 2 mobilite, 3 aides techniques, 4 Eole, 5 ateliers, 6 droits, 7 actualites, 8 coordonnees, 9 quitter.</prompt>
+    <choice dtmf="1" next="#p92N_accueil"/>
+    <choice dtmf="2" next="#p92N_mobilite"/>
+    <choice dtmf="3" next="#p92N_aides"/>
+    <choice dtmf="4" next="#p92N_eole"/>
+    <choice dtmf="5" next="#p92N_ateliers"/>
+    <choice dtmf="6" next="#p92N_droits"/>
+    <choice dtmf="7" next="#p92N_actu"/>
+    <choice dtmf="8" next="#p92N_contacts"/>
+    <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="loisir_ateliers"><block><prompt>Ateliers créatifs, informatiques adaptés, etc.</prompt><goto next="#menu_loisir_intro"/></block></form>
-  <form id="loisir_jeux"><block><prompt>Jeux accessibles et rencontres conviviales.</prompt><goto next="#menu_loisir_intro"/></block></form>
+  <form id="p92N_accueil"><block><prompt>Accueil et conseils. Permanences a Courbevoie et Gennevilliers.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_mobilite"><block><prompt>Autonomie et mobilite, ateliers locaux.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_aides"><block><prompt>Conseils en aides techniques et materiel.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_eole"><block><prompt>Bibliotheque Eole, assistance nationale au 01 44 49 27 28.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_ateliers"><block><prompt>Ateliers et clubs, informatique adaptee.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_droits"><block><prompt>Information sociale et juridique, aide aux demarches MDPH.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_actu"><block><prompt>Actualites locales du 92 Nord sur le site du comite.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_contacts"><block><prompt>Permanences 92 Nord : Courbevoie et Gennevilliers.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
 
-  <form id="menu_sortie_intro">
+  <!-- 92 SUD -->
+  <form id="menu_principal_intro_92S">
     <block>
       <prompt>
-        Vous êtes dans la rubrique sortie.
-        Exemple : à Toulouse, sorties culturelles organisées par le comité Haute-Garonne. :contentReference[oaicite:6]{index=6}
-        Tapez 1 culture, 2 nature, 9 pour retour.
+        Menu principal 92 Sud. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
+        7 actualites, 8 coordonnees et permanences, 9 quitter.
       </prompt>
-      <goto next="#menu_sortie"/>
+      <goto next="#menu_principal_92S"/>
     </block>
   </form>
-  <menu id="menu_sortie" dtmf="true">
-    <prompt>Sortie. 1 culture, 2 nature, 9 retour.</prompt>
-    <choice dtmf="1" next="#sortie_culture"><prompt>1 culture</prompt></choice>
-    <choice dtmf="2" next="#sortie_nature"><prompt>2 nature</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
-  </menu>
-  <form id="sortie_culture"><block><prompt>Visites dans les musées accessibles, ex. Musée Valentin Haüy à Paris. :contentReference[oaicite:7]{index=7}</prompt><goto next="#menu_sortie_intro"/></block></form>
-  <form id="sortie_nature"><block><prompt>Balades accessibles dans votre comité local.</prompt><goto next="#menu_sortie_intro"/></block></form>
 
-  <form id="menu_sante_intro">
-    <block>
-      <prompt>
-        Vous êtes dans la rubrique santé.
-        Tapez 1 pour conseils santé, 2 pour accompagnement, 9 pour retour.
-      </prompt>
-      <goto next="#menu_sante"/>
-    </block>
-  </form>
-  <menu id="menu_sante" dtmf="true">
-    <prompt>Santé. 1 conseils, 2 accompagnement, 9 retour.</prompt>
-    <choice dtmf="1" next="#sante_conseils"><prompt>1 conseils</prompt></choice>
-    <choice dtmf="2" next="#sante_accompagnement"><prompt>2 accompagnement</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  <menu id="menu_principal_92S" dtmf="true">
+    <prompt>92 Sud. 1 accueil, 2 mobilite, 3 aides techniques, 4 Eole, 5 ateliers, 6 droits, 7 actualites, 8 coordonnees, 9 quitter.</prompt>
+    <choice dtmf="1" next="#p92S_accueil"/>
+    <choice dtmf="2" next="#p92S_mobilite"/>
+    <choice dtmf="3" next="#p92S_aides"/>
+    <choice dtmf="4" next="#p92S_eole"/>
+    <choice dtmf="5" next="#p92S_ateliers"/>
+    <choice dtmf="6" next="#p92S_droits"/>
+    <choice dtmf="7" next="#p92S_actu"/>
+    <choice dtmf="8" next="#p92S_contacts"/>
+    <choice dtmf="9" next="#fin"/>
   </menu>
-  <form id="sante_conseils"><block><prompt>Conseils santé, prévention, informations utiles.</prompt><goto next="#menu_sante_intro"/></block></form>
-  <form id="sante_accompagnement"><block><prompt>Accompagnement social, aide aux démarches, orientation.</prompt><goto next="#menu_sante_intro"/></block></form>
 
-  <form id="menu_actu_intro">
-    <block>
-      <prompt>
-        Vous êtes dans la rubrique actualité.
-        Tapez 1 pour actualités locales, 2 pour actualités nationales, 9 pour retour.
-      </prompt>
-      <goto next="#menu_actu"/>
-    </block>
-  </form>
-  <menu id="menu_actu" dtmf="true">
-    <prompt>Actualité. 1 locales, 2 nationales, 9 retour.</prompt>
-    <choice dtmf="1" next="#actu_locale"><prompt>1 locales</prompt></choice>
-    <choice dtmf="2" next="#actu_nationale"><prompt>2 nationales</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
-  </menu>
-  <form id="actu_locale"><block><prompt>Actualités du comité local (ex. Paris, Haute-Garonne)…</prompt><goto next="#menu_actu_intro"/></block></form>
-  <form id="actu_nationale"><block><prompt>L’association Valentin Haüy est active partout en France depuis 1889. :contentReference[oaicite:8]{index=8}</prompt><goto next="#menu_actu_intro"/></block></form>
+  <form id="p92S_accueil"><block><prompt>Accueil et conseils par le comite 92 Sud.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_mobilite"><block><prompt>Mobilite, loisirs et sport en plein air.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_aides"><block><prompt>Materiel specialise et accompagnement.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_eole"><block><prompt>Bibliotheque Eole, assistance au 01 44 49 27 28.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_ateliers"><block><prompt>Clubs nouvelles technologies et informatique adaptee, ateliers et cours.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_droits"><block><prompt>Information sociale et juridique, aide aux dossiers et aides techniques ou humaines.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_actu"><block><prompt>Loisirs et culture, actualites du comite 92 Sud.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_contacts"><block><prompt>92 Sud a Sceaux. Voir adresse et infos pratiques sur le site du comite.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
 
+  <!-- ========================= -->
   <!-- FIN -->
+  <!-- ========================= -->
   <form id="fin">
     <block>
       <prompt>Merci pour votre appel. Au revoir.</prompt>
