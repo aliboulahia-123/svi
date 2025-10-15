@@ -10,7 +10,8 @@
         Bienvenue à l Association Valentin Hauy.
         Pour choisir votre departement en deux etapes :
         tapez d abord le premier chiffre, puis le second.
-        Pour la demo : 7 puis 5 pour Paris, 3 puis 1 pour Haute Garonne, 9 puis 2 ou 1 pour Hauts de Seine Sud ou Nord.
+        Pour la demo : 7 puis 5 pour Paris, 3 puis 1 pour Haute Garonne,
+        9 puis 2 pour Hauts de Seine 92, avec choix Nord ou Sud.
       </prompt>
       <goto next="#menu_dizaine"/>
     </block>
@@ -44,22 +45,26 @@
   </menu>
 
   <menu id="menu_unite_9" dtmf="true">
-    <prompt>Second chiffre. Tapez 2 pour Hauts de Seine 92, ou 1 pour 91 (non renseigne ici).</prompt>
+    <prompt>Second chiffre. Tapez 2 pour Hauts de Seine 92.</prompt>
     <choice dtmf="2" next="#announce_92"/>
     <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
     <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
   </menu>
 
   <!-- ========================= -->
-  <!-- ANNONCES COMITE -->
+  <!-- ANNONCES COMITE (riches) -->
   <!-- ========================= -->
 
   <!-- 75 PARIS -->
   <form id="announce_75">
     <block>
       <prompt>
-        Departement 75. Comite de Paris et d Ile de France.
-        Pour continuer, vous entendrez un menu adapte aux besoins des personnes deficients visuelles.
+        Departement 75. Vous êtes rattaché au Comité de Paris Île de France,
+        situé au 3 rue Jacquier, Paris quatorzieme.
+        L équipe vous accueille, informe et conseille sur l ensemble des services de l association,
+        les activités culturelles et sportives, et l accès aux aides techniques.
+        Pour joindre le comité de Paris Ile de France : 01 40 44 88 00.
+        Vous allez entendre un menu complet adapté aux besoins des personnes aveugles et malvoyantes.
       </prompt>
       <goto next="#menu_principal_intro_75"/>
     </block>
@@ -69,8 +74,12 @@
   <form id="announce_31">
     <block>
       <prompt>
-        Departement 31. Comite de la Haute Garonne a Toulouse.
-        Adresse 7 rue Idrac, 31000 Toulouse. Telephone 05 61 62 44 45.
+        Departement 31. Vous êtes rattaché au Comité de la Haute Garonne à Toulouse,
+        7 rue Idrac, 31000 Toulouse. Accueil du lundi, mardi et jeudi de 9 heures à 12 heures
+        et de 14 heures à 17 heures, et le vendredi de 9 heures à 12 heures.
+        Le comité propose accueil, bien être, sport, boutique et matériels spécialisés,
+        bibliothèque sonore, ateliers, et nouvelles technologies.
+        Vous allez entendre un menu complet pour accéder facilement à ces informations.
       </prompt>
       <goto next="#menu_principal_intro_31"/>
     </block>
@@ -80,7 +89,8 @@
   <form id="announce_92">
     <block>
       <prompt>
-        Departement 92. Pour choisir votre comite, tapez 1 pour Hauts de Seine Nord, ou 2 pour Hauts de Seine Sud.
+        Departement 92. Plusieurs comités couvrent le territoire.
+        Tapez 1 pour Hauts de Seine Nord, ou 2 pour Hauts de Seine Sud à Sceaux.
       </prompt>
       <goto next="#menu_92"/>
     </block>
@@ -98,7 +108,10 @@
   <form id="announce_92_nord">
     <block>
       <prompt>
-        92 Nord. Permanences a Courbevoie et Gennevilliers. Vous allez acceder au menu adapte.
+        92 Nord. Correspondances et permanences mentionnées à Courbevoie et Gennevilliers.
+        Le comité nord assure accueil, écoute, information et conseil,
+        et relaie les activités AVH sur le territoire.
+        Vous allez accéder à un menu adapté aux besoins du quotidien.
       </prompt>
       <goto next="#menu_principal_intro_92N"/>
     </block>
@@ -107,36 +120,46 @@
   <form id="announce_92_sud">
     <block>
       <prompt>
-        92 Sud. Comite des Hauts de Seine Sud a Sceaux.
-        Vous allez acceder au menu adapte.
+        92 Sud. Comité des Hauts de Seine Sud à Sceaux,
+        2 rue des Ecoles, 92330 Sceaux. Téléphone 01 55 52 06 06.
+        Permanence le mardi et le jeudi de 9 heures 30 à 15 heures, permanence téléphonique les autres jours.
+        Antennes présentes notamment à Antony, Bourg la Reine, Chatenay Malabry, Clamart, Fontenay aux Roses et Le Plessis Robinson.
+        Vous allez accéder à un menu complet pour retrouver les services, ateliers et coordonnées utiles.
       </prompt>
       <goto next="#menu_principal_intro_92S"/>
     </block>
   </form>
 
   <!-- ========================= -->
-  <!-- MENUS PRINCIPAUX PAR COMITE (meme rubriques) -->
+  <!-- MENUS PRINCIPAUX PAR COMITE (rubriques riches et adaptées) -->
   <!-- ========================= -->
 
   <!-- RUBRIQUES COMMUNES (1..9) :
-       1 Accueil & conseils
-       2 Mobilite & autonomie
-       3 Aides techniques & materiel
-       4 Bibliotheque Eole
-       5 Ateliers & nouvelles technologies
-       6 Droits & accompagnement
-       7 Actualites du comite
-       8 Coordonnees & permanences
+       1 Accueil & conseils (orientation, premier contact)
+       2 Mobilite & autonomie (déplacements, vie quotidienne)
+       3 Aides techniques & materiel (démonstrations, prêt/achat, conseils)
+       4 Bibliotheque Eole (contact, horaires, modes d accès)
+       5 Ateliers & nouvelles technologies (informatique adaptée, braille, clubs)
+       6 Droits & accompagnement (MDPH, dossiers, prestations)
+       7 Actualites du comite (événements, portes ouvertes)
+       8 Coordonnees & permanences (adresse, téléphone, horaires)
        9 Quitter
   -->
 
-  <!-- PARIS -->
+  <!-- ===== PARIS ===== -->
   <form id="menu_principal_intro_75">
     <block>
       <prompt>
-        Menu principal Paris. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
-        4 bibliotheque Eole, 5 ateliers et nouvelles technologies,
-        6 droits et accompagnement, 7 actualites, 8 coordonnees et permanences, 9 quitter.
+        Paris. Menu principal. Tapez :
+        1 accueil et conseils,
+        2 mobilite et autonomie,
+        3 aides techniques et materiel,
+        4 bibliotheque Eole,
+        5 ateliers et nouvelles technologies,
+        6 droits et accompagnement,
+        7 actualites du comite,
+        8 coordonnees et permanences,
+        9 pour quitter.
       </prompt>
       <goto next="#menu_principal_75"/>
     </block>
@@ -155,30 +178,107 @@
     <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="p75_accueil"><block><prompt>Accueil, information et conseil par le comite de Paris.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_mobilite"><block><prompt>Autonomie de la vie quotidienne et mobilite, ateliers dedies.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_aides"><block><prompt>Materiel specialise et conseils, demonstration d aides techniques.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_eole">
+  <form id="p75_accueil">
     <block>
       <prompt>
-        Bibliotheque Eole. Pour assistance, telephone 01 44 49 27 28.
-        Accueil telephonique lundi 14 heures a 16 heures 45, mardi a vendredi 10 a 12 heures puis 14 a 16 heures 45.
+        Accueil et conseils du Comite de Paris Ile de France, 3 rue Jacquier, Paris quatorzieme.
+        L equipe accueille, informe et accompagne les personnes aveugles et malvoyantes de la region.
+        Premier contact, ecoute, information sur les activites AVH et l acces aux solutions : accessibilite, formation, culture et sport.
+        Telephone du comite : 01 40 44 88 00. 
       </prompt>
       <goto next="#menu_principal_intro_75"/>
     </block>
   </form>
-  <form id="p75_ateliers"><block><prompt>Ateliers et nouvelles technologies. Exemple sport adapte comme le cecifoot a Paris.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_droits"><block><prompt>Information sociale et juridique, aide aux demarches.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_actu"><block><prompt>Actualites du comite de Paris, par exemple evenements culturels et salons du livre adapte.</prompt><goto next="#menu_principal_intro_75"/></block></form>
-  <form id="p75_contacts"><block><prompt>Coordonnees du comite de Paris disponibles sur le site, accueil au siege a Paris 7e.</prompt><goto next="#menu_principal_intro_75"/></block></form>
 
-  <!-- HAUTE-GARONNE -->
+  <form id="p75_mobilite">
+    <block>
+      <prompt>
+        Mobilite et autonomie au quotidien : informations et orientation vers des ateliers et accompagnements
+        pour les deplacements, la vie domestique et l usage des outils accessibles.
+        Possibilite d etre informe sur les sorties accessibles en Ile de France et les activites culturelles adaptees proposees par l association.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_aides">
+    <block>
+      <prompt>
+        Aides techniques et materiel specialise : conseils personnalisés et demonstrations
+        de loupes, reglettes, lecteurs audio, blocs notes braille, smartphones et logiciels de lecture d ecran.
+        Orientation vers la boutique et vers des permanences pour tester les equipements.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_eole">
+    <block>
+      <prompt>
+        Bibliotheque Eole, la mediatheque Valentin Hauy.
+        Pour tout conseil de lecture, abonnements et commandes :
+        telephone 01 44 49 27 28, courriel mediatheque arobase avh point asso point fr.
+        Horaires d accueil telephonique : le lundi de 14 heures a 16 heures 45,
+        du mardi au vendredi de 10 heures a 12 heures et de 14 heures a 16 heures 45.
+        Adresse postale Mediatheque : 5 rue Duroc, 75007 Paris.
+        Acces aux livres audio Daisy, aux livres braille et gros caracteres, et accompagnement par des bibliothecaires specialises.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_ateliers">
+    <block>
+      <prompt>
+        Ateliers et nouvelles technologies : initiation et perfectionnement aux lecteurs d ecran,
+        aux smartphones accessibles, au braille et aux outils numeriques du quotidien.
+        Clubs et rencontres, et information sur les activites culturelles et sportives soutenues par l association à Paris.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_droits">
+    <block>
+      <prompt>
+        Droits et accompagnement : information sociale et juridique, dossiers M D P H,
+        prestations, aides techniques et humaines, et orientation vers les bons interlocuteurs.
+        Le comite accompagne vos demarches ou vous met en relation avec les services competents.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_actu">
+    <block>
+      <prompt>
+        Actualites du Comite de Paris Ile de France : par exemple, des evenements tels que Racontée au Parc floral,
+        ou le Salon du Livre Adapté. Retrouvez les dates et les informations pratiques sur la page Actualites du comité.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <form id="p75_contacts">
+    <block>
+      <prompt>
+        Coordonnees et permanences du Comite de Paris Ile de France.
+        Adresse : 3 rue Jacquier, 75014 Paris. Telephone general AVH : 01 44 49 27 27.
+        Pour contacter directement le comité Paris Ile de France : 01 40 44 88 00.
+        Accueil ouvert du lundi au jeudi de 9 heures à 17 heures 30, et le vendredi de 9 heures à 17 heures.
+      </prompt>
+      <goto next="#menu_principal_intro_75"/>
+    </block>
+  </form>
+
+  <!-- ===== HAUTE-GARONNE ===== -->
   <form id="menu_principal_intro_31">
     <block>
       <prompt>
-        Menu principal Haute Garonne. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        Haute Garonne. Menu principal. Tapez :
+        1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques et materiel,
         4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
-        7 actualites, 8 coordonnees et permanences, 9 quitter.
+        7 actualites du comite, 8 coordonnees et permanences, 9 pour quitter.
       </prompt>
       <goto next="#menu_principal_31"/>
     </block>
@@ -197,29 +297,101 @@
     <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="p31_accueil"><block><prompt>Accueil et conseils au comite de Toulouse.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_mobilite"><block><prompt>Mobilite, bien etre et sport.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_aides"><block><prompt>Boutique et materiels specialises, bibliotheque sonore, materiel adapte.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_eole">
+  <form id="p31_accueil">
     <block>
       <prompt>
-        Eole, la bibliotheque audio et braille de l association. Assistance par telephone 01 44 49 27 28.
+        Accueil et conseils au Comite de Toulouse, écoute, information et orientation.
+        L equipe vous accompagne vers les bons services : bibliotheque sonore, boutique de materiels specialises,
+        ateliers et activites sportives et culturelles adaptees.
       </prompt>
       <goto next="#menu_principal_intro_31"/>
     </block>
   </form>
-  <form id="p31_ateliers"><block><prompt>Cours et ateliers : tandem, anglais, qi gong, zumba, braille, informatique adaptee.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_droits"><block><prompt>Accompagnement social et droits : information sur la prise en charge, dossiers, orientation vers les instances.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_actu"><block><prompt>Sorties culturelles et touristiques organisees par le comite.</prompt><goto next="#menu_principal_intro_31"/></block></form>
-  <form id="p31_contacts"><block><prompt>Coordonnees : 7 rue Idrac, 31000 Toulouse. Telephone 05 61 62 44 45. Horaires d accueil indiques sur le site.</prompt><goto next="#menu_principal_intro_31"/></block></form>
 
-  <!-- 92 NORD -->
+  <form id="p31_mobilite">
+    <block>
+      <prompt>
+        Mobilite, bien etre et sport : informations locales sur les activites physiques adapteess,
+        et sur la mobilité urbaine et les deplacements.
+        Possibilite d etre mis en relation avec des benevoles ou partenaires locaux.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_aides">
+    <block>
+      <prompt>
+        Boutique et materiels specialises, conseils et demonstrations : loupes, lecteurs audio Daisy,
+        outils braille et solutions numeriques adaptees.
+        Informations pratiques sur les disponibilites au comite et les conseils d usage.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_eole">
+    <block>
+      <prompt>
+        Bibliotheque Eole, la mediatheque Valentin Hauy.
+        Telephone 01 44 49 27 28, courriel mediatheque arobase avh point asso point fr.
+        Horaires d accueil telephonique : lundi 14 heures a 16 heures 45, mardi a vendredi 10 a 12 et 14 a 16 heures 45.
+        Acces a des milliers de livres audio Daisy et livres braille, accompagnement par des bibliothecaires.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_ateliers">
+    <block>
+      <prompt>
+        Ateliers et nouvelles technologies : exemples cites par le comite,
+        tandem, anglais, qi gong, zumba, braille, informatique adaptee.
+        Renseignements et inscriptions via l accueil du comite de la Haute Garonne.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_droits">
+    <block>
+      <prompt>
+        Droits et accompagnement : information sociale et juridique, dossiers, orientation vers les bonnes instances,
+        aides techniques et humaines. Le comite peut vous conseiller et vous orienter dans vos demarches M D P H.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_actu">
+    <block>
+      <prompt>
+        Actualites du comite de la Haute Garonne : sorties culturelles, rencontres, annonces locales.
+        Consultez la page du comite pour le calendrier et les nouveautes.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <form id="p31_contacts">
+    <block>
+      <prompt>
+        Coordonnees et permanences du comite Haute Garonne :
+        7 rue Idrac, 31000 Toulouse. Accueil lundi, mardi, jeudi de 9 a 12 et 14 a 17,
+        et vendredi de 9 a 12. Informations et contact par le site AVH.
+      </prompt>
+      <goto next="#menu_principal_intro_31"/>
+    </block>
+  </form>
+
+  <!-- ===== 92 NORD ===== -->
   <form id="menu_principal_intro_92N">
     <block>
       <prompt>
-        Menu principal 92 Nord. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        92 Nord. Menu principal. Tapez :
+        1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques et materiel,
         4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
-        7 actualites, 8 coordonnees et permanences, 9 quitter.
+        7 actualites locales, 8 coordonnees et permanences, 9 pour quitter.
       </prompt>
       <goto next="#menu_principal_92N"/>
     </block>
@@ -238,22 +410,23 @@
     <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="p92N_accueil"><block><prompt>Accueil et conseils. Permanences a Courbevoie et Gennevilliers.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_mobilite"><block><prompt>Autonomie et mobilite, ateliers locaux.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_aides"><block><prompt>Conseils en aides techniques et materiel.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_eole"><block><prompt>Bibliotheque Eole, assistance nationale au 01 44 49 27 28.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_ateliers"><block><prompt>Ateliers et clubs, informatique adaptee.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_droits"><block><prompt>Information sociale et juridique, aide aux demarches MDPH.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_actu"><block><prompt>Actualites locales du 92 Nord sur le site du comite.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
-  <form id="p92N_contacts"><block><prompt>Permanences 92 Nord : Courbevoie et Gennevilliers.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_accueil"><block><prompt>Accueil, écoute et information. Correspondances mentionnées à Courbevoie et Gennevilliers pour des permanences locales.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_mobilite"><block><prompt>Mobilité, déplacements et activités adaptées sur le territoire nord du département.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_aides"><block><prompt>Conseils sur les aides techniques et l accès au matériel spécialisé AVH.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_eole"><block><prompt>Bibliotheque Eole : 01 44 49 27 28, horaires d accueil téléphonique indiqués dans la rubrique Eole.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_ateliers"><block><prompt>Ateliers et clubs : informatique adaptée, rencontres et activités locales.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_droits"><block><prompt>Information sociale et juridique, accompagnement des dossiers et orientation vers les bons interlocuteurs.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_actu"><block><prompt>Actualités locales 92 Nord : se référer à la page ile de France pour les correspondances et contacts.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
+  <form id="p92N_contacts"><block><prompt>Coordonnées : correspondance 92 Nord mentionnée côté Paris Île de France, avec points d accueil à Courbevoie et Gennevilliers.</prompt><goto next="#menu_principal_intro_92N"/></block></form>
 
-  <!-- 92 SUD -->
+  <!-- ===== 92 SUD ===== -->
   <form id="menu_principal_intro_92S">
     <block>
       <prompt>
-        Menu principal 92 Sud. 1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques,
+        92 Sud. Menu principal. Tapez :
+        1 accueil et conseils, 2 mobilite et autonomie, 3 aides techniques et materiel,
         4 bibliotheque Eole, 5 ateliers et nouvelles technologies, 6 droits et accompagnement,
-        7 actualites, 8 coordonnees et permanences, 9 quitter.
+        7 actualites locales, 8 coordonnees et permanences, 9 pour quitter.
       </prompt>
       <goto next="#menu_principal_92S"/>
     </block>
@@ -272,14 +445,85 @@
     <choice dtmf="9" next="#fin"/>
   </menu>
 
-  <form id="p92S_accueil"><block><prompt>Accueil et conseils par le comite 92 Sud.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_mobilite"><block><prompt>Mobilite, loisirs et sport en plein air.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_aides"><block><prompt>Materiel specialise et accompagnement.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_eole"><block><prompt>Bibliotheque Eole, assistance au 01 44 49 27 28.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_ateliers"><block><prompt>Clubs nouvelles technologies et informatique adaptee, ateliers et cours.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_droits"><block><prompt>Information sociale et juridique, aide aux dossiers et aides techniques ou humaines.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_actu"><block><prompt>Loisirs et culture, actualites du comite 92 Sud.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
-  <form id="p92S_contacts"><block><prompt>92 Sud a Sceaux. Voir adresse et infos pratiques sur le site du comite.</prompt><goto next="#menu_principal_intro_92S"/></block></form>
+  <form id="p92S_accueil">
+    <block>
+      <prompt>
+        Accueil et conseils par le Comite 92 Sud, appui aux demarches et informations pratiques
+        pour les personnes aveugles et malvoyantes du secteur sud des Hauts de Seine.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_mobilite">
+    <block>
+      <prompt>
+        Mobilite, loisirs et activites de plein air, avec informations locales et relais vers les partenaires municipaux et associatifs.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_aides">
+    <block>
+      <prompt>
+        Materiel specialise et accompagnement : informations et conseils, orientation vers des demonstrations
+        et vers la boutique AVH pour equipements adaptes.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_eole">
+    <block>
+      <prompt>
+        Bibliotheque Eole, service national de lecture audio et braille : 01 44 49 27 28.
+        Horaires d accueil telephonique habituels : lundi 14 h à 16 h 45, mardi à vendredi 10 h à 12 h et 14 h à 16 h 45.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_ateliers">
+    <block>
+      <prompt>
+        Clubs nouvelles technologies, ateliers, cours et rencontres,
+        tels que l informatique adaptee et les activites de loisirs au sein des antennes du 92 Sud.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_droits">
+    <block>
+      <prompt>
+        Information sociale et juridique, aide aux dossiers, orientation vers les services départementaux.
+        Le comite est interlocuteur auprès du departement et propose une permanence au 2 rue des Ecoles à Sceaux,
+        le mardi et le jeudi de 9 heures 30 à 15 heures, permanence téléphonique les autres jours.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_actu">
+    <block>
+      <prompt>
+        Actualites 92 Sud : activites, ateliers et informations locales diffusees via la page du comite sur le site AVH.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
+
+  <form id="p92S_contacts">
+    <block>
+      <prompt>
+        Coordonnees 92 Sud : Comite des Hauts de Seine Sud, 2 rue des Ecoles, 92330 Sceaux.
+        Telephone 01 55 52 06 06. Antennes : Antony, Bourg la Reine, Chatenay Malabry, Clamart, Fontenay aux Roses, Le Plessis Robinson.
+        Pour changer de departement, depuis le menu principal tapez 8.
+      </prompt>
+      <goto next="#menu_principal_intro_92S"/>
+    </block>
+  </form>
 
   <!-- ========================= -->
   <!-- FIN -->
