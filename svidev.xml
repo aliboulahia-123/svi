@@ -1,164 +1,386 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<vxml version="2.0" xml:lang="fr-FR">
+<?xml version="1.0" ?>
+<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" xml:lang="fr-FR">
+        <var name="count" />
+        <var name="rubrique" />
+        <var name="message" />
+        <var name="menu" />
+        <var name="etape" expr="'suivant'" />
+        <var name="path_menu" expr="'menus/'" />
+        <var name="path_annonce" expr="'annonces/'" />
+        
+        <property name="inputmodes" value="dtmf"/>
+        <property name="termchar" value=""/>
 
-  <!-- ===== Accueil -> saisie département ===== -->
-  <form id="accueil">
-    <block>
-      <prompt bargein="true">
-        Bienvenue. Composez le numero de votre departement : deux chiffres pour la metropole, trois pour l outre mer.
-        Appuyez sur dièse pour repeter.
-      </prompt>
-      <goto next="#dept_input"/>
-    </block>
-  </form>
+        <catch event="noinput nomatch" count="1"><audio expr="path_menu + 'pas_de_reponse.wav'"/><reprompt/></catch>
+        <catch event="noinput nomatch" count="2"><audio expr="path_menu + 'pas_de_reponse.wav'"/><reprompt/></catch>
+        <catch event="noinput nomatch" count="3"><disconnect/></catch>
 
-  <form id="dept_input">
-    <field name="dept">
-      <prompt bargein="true">Tapez maintenant le numero du departement.</prompt>
-      <!-- builtin DTMF: 2 a 3 chiffres -->
-      <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
 
-      <noinput><prompt>Je n ai rien entendu. Reessayez.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entree invalide. Reessayez.</prompt><reprompt/></nomatch>
 
-      <filled>
-        <!-- Corse 2A/2B via 201 / 202 -->
-        <if cond="dept == '201'">
-          <assign name="dept" expr="'2A'"/>
-        <elseif cond="dept == '202'"/>
-          <assign name="dept" expr="'2B'"/>
-        </if>
+        <menu>
+                <audio expr="path_menu + 'bienvenue_avh.wav'"/>
+                <choice dtmf="*" next="#navigation" />
+                <catch event="noinput" count="1"><audio expr="path_menu + 'pas_de_reponse_touche_etoile.wav'"/></catch>
+                <catch event="noinput" count="2"><audio expr="path_menu + 'pas_de_reponse_touche_etoile.wav'"/></catch>
+                <catch event="noinput" count="3"><disconnect/></catch>
+        </menu>
 
-        <!-- Cas special 92 : deux comites -->
-        <if cond="dept == '92'">
-          <goto next="#choose_92"/>
-        <else/>
-          <goto next="#announce_committee"/>
-        </if>
-      </filled>
-    </field>
-  </form>
 
-  <!-- ===== 92 : choix Nord / Sud ===== -->
-  <form id="choose_92_intro">
-    <block>
-      <prompt>Departement 92. Plusieurs comites existent.</prompt>
-      <goto next="#choose_92"/>
-    </block>
-  </form>
+        <form id="navigation">
+          <field name="nav">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'navigation2.wav'"/>
+            <option dtmf="1" value=""/>
+            <option dtmf="2" value=""/>
+            <option dtmf="3" value=""/>
+            <option dtmf="4" value=""/>
+            <option dtmf="5" value=""/>
+            <option dtmf="6" value=""/>
+            <option dtmf="7" value=""/>
+            <option dtmf="8" value=""/>
+            <option dtmf="9" value=""/>
+            <option dtmf="0" value=""/>
+            <option dtmf="*" value=""/>
+          </field>
+            <filled>
+              <if cond="nav=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <goto next="#menu_general" />
+              </if>
+            </filled>
+            <catch event="noinput"><goto next="#menu_general" /></catch>
+        </form>
 
-  <menu id="choose_92" dtmf="true">
-    <choice dtmf="1" next="#set_92_nord"><prompt>1 Hauts de Seine Nord</prompt></choice>
-    <choice dtmf="2" next="#set_92_sud"><prompt>2 Hauts de Seine Sud</prompt></choice>
-    <choice dtmf="9" next="#dept_input"><prompt>9 Changer de departement</prompt></choice>
 
-    <noinput><prompt>Pas d entree. Repetez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Repetez.</prompt><reprompt/></nomatch>
-  </menu>
+        <menu id="menu_general" >
+                <audio expr="path_menu + 'menu_general.wav'" />
+                <choice dtmf="1" next="#dernieres_infos" >Les dernières informations</choice>
+                <choice dtmf="2" next="#films_audiodecrits" >Les films audiodécrits</choice>
+                <choice dtmf="3" next="#culture_loisirs" >Culture, loisirs et sports</choice>
+                <choice dtmf="4" next="#sejours_adaptes" >Les séjours adaptés</choice>
+                <choice dtmf="5" next="#mediatheque" >La médiathèque de l'Association Valentin Haüy</choice>
+                <choice dtmf="6" next="#materiel_specialise" >Le matériel spécialisé</choice>
+                <choice dtmf="7" next="#services_avh" >Les services proposés par l'Association Valentin Haüy</choice>
+                <choice dtmf="8" next="#avh_siege" >Le siège de l'Association Valentin Haüy en pratique</choice>
+                <choice dtmf="9" next="#avh_contact" >Les adresses et téléphones utiles de l'Association Valentin Haüy</choice>
+        </menu>
 
-  <form id="set_92_nord">
-    <block>
-      <prompt>Vous etes rattache au Comite Hauts de Seine Nord.</prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
 
-  <form id="set_92_sud">
-    <block>
-      <prompt>Vous etes rattache au Comite Hauts de Seine Sud.</prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
+        <form id="lecture_message">
+            <block>
+              <submit next="navigation.php" namelist="rubrique etape menu" method="post"/>
+            </block>
+        </form>
 
-  <!-- ===== Annonce comité (mapping simple par defaut) ===== -->
-  <form id="announce_committee">
-    <block>
-      <prompt>
-        <if cond="dept == '75'">
-          Vous etes rattache au Comite de Paris.
-        <elseif cond="dept == '971'"/>
-          Vous etes rattache au Comite de Guadeloupe.
-        <elseif cond="dept == '972'"/>
-          Vous etes rattache au Comite de Martinique.
-        <elseif cond="dept == '973'"/>
-          Vous etes rattache au Comite de Guyane.
-        <elseif cond="dept == '974'"/>
-          Vous etes rattache au Comite de La Reunion.
-        <elseif cond="dept == '976'"/>
-          Vous etes rattache au Comite de Mayotte.
-        <else/>
-          Vous etes rattache au Comite du departement <value expr="dept"/>.
-        </if>
-      </prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
 
-  <!-- ===== TON MENU QUI MARCHE (inchangé) ===== -->
-  <form id="menu_principal_intro">
-    <block>
-      <prompt bargein="true">
-        Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour sante, 5 pour actualite.
-        Appuyez sur dièse pour repeter.
-      </prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
+        <form id="dernieres_infos">
+          <block>
+            <assign name="rubrique" expr="'10'"/>
+            <assign name="menu" expr="'menu_general'"/>
+            <goto next="#lecture_message" />
+          </block>
+        </form>
 
-  <menu id="menu_principal" dtmf="true">
-    <choice dtmf="1" next="#menu_sport"><prompt>1 pour sport</prompt></choice>
-    <choice dtmf="2" next="#loisir"><prompt>2 pour loisir</prompt></choice>
-    <choice dtmf="3" next="#sortie"><prompt>3 pour sortie</prompt></choice>
-    <choice dtmf="4" next="#sante"><prompt>4 pour sante</prompt></choice>
-    <choice dtmf="5" next="#actu"><prompt>5 pour actualite</prompt></choice>
-    <choice dtmf="9" next="#dept_input"><prompt>9 Changer de departement</prompt></choice>
+        <form id="films_audiodecrits">
+          <field name="audiovision">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'films_audiodecrits.wav'"/>
+            <option dtmf="2" value="22">Les films audiodécrits au cinéma</option>
+            <option dtmf="1" value="21">Les films du mois à la télévision</option>
+          </field>
+            <filled>
+              <if cond="audiovision=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="audiovision"/>
+                <assign name="menu" expr="'films_audiodecrits'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>
 
-    <noinput>
-      <prompt>Je n ai rien entendu. Repetez votre choix.</prompt>
-      <reprompt/>
-    </noinput>
-    <nomatch>
-      <prompt>Choix invalide. Repetez votre choix.</prompt>
-      <reprompt/>
-    </nomatch>
-  </menu>
+        <form id="culture_loisirs">
+          <field name="culture">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'culture_loisirs.wav'"/>
+            <option dtmf="1" value="31">Spectacles en audiodescription</option>
+            <option dtmf="2" value="32">Les émissions sur la malvoyance</option>
+            <option dtmf="3" value="33">Les musées adaptés</option>
+            <option dtmf="4" value="34">Les concerts</option>
+            <option dtmf="5" value="35">Quelques idées de conférences et animations</option>
+            <option dtmf="6" value="36">Les activités sportives</option>
+            <option dtmf="7" value="37">Club de la Sizeranne</option>
+            <option dtmf="8" value="38">Les Bibliothèques adaptées</option>
+          </field>
+          <filled>
+            <if cond="culture=='#'">
+              <goto next="#menu_general" />
+            <elseif cond="culture=='36'" />
+              <goto next="#activites_sportives" />
+            <else/>
+              <assign name="rubrique" expr="culture"/>
+              <assign name="menu" expr="'culture_loisirs'"/>
+              <goto next="#lecture_message" />
+            </if>
+          </filled>
+        </form>
+          <form id="activites_sportives">
+            <field name="sport">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+              <audio expr="path_menu + 'activites_sportives.wav'"/>
+              <option dtmf="1" value="361">Entrainements matches et compétitions</option>
+              <option dtmf="2" value="362">Randonnées</option>
+              <option dtmf="3" value="363">Courir accompagné</option>
+              <option dtmf="4" value="364">Sports du Club de la Sizeranne</option>
+            </field>
+              <filled>
+                <if cond="sport=='#'">
+                  <goto next="#menu_general" />
+                <else/>
+                  <assign name="rubrique" expr="sport"/>
+                  <assign name="menu" expr="'activites_sportives'"/>
+                  <goto next="#lecture_message" />
+                </if>
+              </filled>
+          </form>
+        
+        <form id="sejours_adaptes">
+          <field name="sejour">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'sejours_adaptes.wav'"/>
+            <option dtmf="1" value="41">Séjours à Arvert</option>
+            <option dtmf="2" value="42">Autres séjours</option>
+          </field>
+            <filled>
+              <if cond="sejour=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="sejour"/>
+                <assign name="menu" expr="'sejours_adaptes'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>
 
-  <!-- Sous-menu SPORT -->
-  <form id="menu_sport_intro">
-    <block>
-      <prompt>Rubrique sport. Tapez 1 pour football, 2 pour tennis, 9 pour retour.</prompt>
-      <goto next="#menu_sport"/>
-    </block>
-  </form>
+        <form id="mediatheque">
+          <field name="media">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'mediatheque.wav'"/>
+            <option dtmf="1" value="51">Nouveautés Livres en braille</option>
+            <option dtmf="2" value="52">Nouveautés Livres audios</option>
+            <option dtmf="3" value="53">Nouveautés Livres en gros caractères</option>
+            <option dtmf="4" value="54">Nouveautés Braille musical</option>
+            <option dtmf="5" value="55">Coups de cœur</option>
+            <option dtmf="6" value="56">Les animations à venir</option>
+            <option dtmf="7" value="57">La médiathèque en pratique</option>
+          </field>
+            <filled>
+              <if cond="media=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="media"/>
+                <assign name="menu" expr="'mediatheque'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>        
 
-  <menu id="menu_sport" dtmf="true">
-    <choice dtmf="1" next="#football"><prompt>1 football</prompt></choice>
-    <choice dtmf="2" next="#tennis"><prompt>2 tennis</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d entree. Repetez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Repetez.</prompt><reprompt/></nomatch>
-  </menu>
+        <form id="materiel_specialise">
+          <field name="sms">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'materiel_specialise.wav'"/>
+            <option dtmf="1" value="61">Informations pratiques</option>
+            <option dtmf="2" value="62">Nouveautés et promotions sur le matériel spécialisé</option>
+          </field>
+            <filled>
+              <if cond="sms=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="sms"/>
+                <assign name="menu" expr="'materiel_specialise'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>
 
-  <form id="football">
-    <block>
-      <prompt>Dernieres infos football. (A remplacer par votre contenu ou un transfert.)</prompt>
-      <!-- Exemple transfert : <transfer dest="tel:+33123456789"/> -->
-      <goto next="#menu_sport_intro"/>
-    </block>
-  </form>
 
-  <form id="tennis">
-    <block>
-      <prompt>Actu tennis. (A remplacer par votre contenu.)</prompt>
-      <goto next="#menu_sport_intro"/>
-    </block>
-  </form>
+        <form id="services_avh">
+          <field name="service">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'services_avh.wav'"/>
+            <option dtmf="1" value="71">Les publications de l'Association Valentin Haüy</option>
+            <option dtmf="2" value="72">Les cours</option>
+            <option dtmf="3" value="73">Les formations professionnelles</option>
+          </field>
+            <filled>
+              <if cond="service=='#'">
+                <goto next="#menu_general" />
+              <elseif cond="service=='72'" />
+                <goto next="#les_cours" />
+              <else/>
+                <assign name="rubrique" expr="service"/>
+                <assign name="menu" expr="'services_avh'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form> 
+        <form id="les_cours">
+          <field name="locomotion">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'les_cours.wav'"/>
+            <option dtmf="1" value="721">Cours de locomotion</option>
+            <option dtmf="2" value="722">Cours d'informatique adaptée</option>
+            <option dtmf="3" value="723">Cours de braille</option>
+          </field>
+            <filled>
+              <if cond="locomotion=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="locomotion"/>
+                <assign name="menu" expr="'les_cours'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>
 
-  <!-- Squelettes autres rubriques -->
-  <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sante"><block><prompt>Rubrique sante.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="actu"><block><prompt>Rubrique actualite.</prompt><goto next="#menu_principal"/></block></form>
 
-  <form id="fin"><block><prompt>Merci. Au revoir.</prompt><disconnect/></block></form>
+        <form id="avh_siege">
+          <field name="siege">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'avh_siege.wav'"/>
+            <option dtmf="1" value="81">Adresse, jours  d'ouverture</option>
+            <option dtmf="2" value="82">La boutique du Siège</option>
+            <option dtmf="3" value="83">Médiathèque</option>
+            <option dtmf="4" value="841">Le service d'action sociale</option>
+            <option dtmf="5" value="85">SOS lecture-écriture</option>
+            <option dtmf="6" value="86">Distributeur de billets</option>
+            <option dtmf="7" value="87">Visites guidées et Musées</option>
+          </field>
+            <filled>
+              <if cond="siege=='#'">
+                <goto next="#menu_general" />
+              <else/>
+                <assign name="rubrique" expr="siege"/>
+                <assign name="menu" expr="'avh_siege'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form>
+        
+        
+        <form id="avh_contact">
+          <field name="contact">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <audio expr="path_menu + 'avh_contact.wav'"/>
+            <option dtmf="1" value="91">Comités</option>
+            <option dtmf="2" value="92">Clubs informatique</option>
+            <option dtmf="3" value="93">Les établissements du secteur protégé</option>
+            <option dtmf="4" value="94">Les établissements du secteur adapté</option>
+            <option dtmf="5" value="95">Les établissements de formation professionnelle</option>
+            <option dtmf="6" value="96">Les résidences</option>
+          </field>
+            <filled>
+              <assign name="rubrique" expr="contact"/>
+              <if cond="contact=='#'">
+                <goto next="#menu_general" />
+              <elseif cond="contact=='91'" />
+                <goto next="#departement" />
+              <elseif cond="contact=='92'" />
+                <goto next="#departement" />
+              <else/>
+                <assign name="menu" expr="'avh_contact'"/>
+                <goto next="#lecture_message" />
+              </if>
+            </filled>
+        </form> 
+
+        <form id="departement">
+          <field name="numero" type="digits?minlength=2;maxlength=2">
+            <grammar type="application/srgs+xml" xmlns="http://www.w3.org/2001/06/grammar" mode="dtmf" version="1.0" root="TOPLEVEL" xml:lang="fr">
+      				<rule id="TOPLEVEL">
+      					<one-of>
+      						<item>#</item>
+      					</one-of>
+      				</rule>
+      			</grammar>
+            <prompt><audio expr="path_menu + 'numero_departement.wav'"/></prompt>
+          </field>
+            <filled>
+              <if cond="numero.length == 2">
+                <assign name="rubrique" expr="rubrique + numero"/>
+                <assign name="menu" expr="'avh_contact'"/>
+                <goto next="#lecture_message" />
+              <else/>
+                <reprompt/>
+              </if>
+            </filled>
+        </form> 
+
 </vxml>
