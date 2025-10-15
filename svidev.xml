@@ -1,94 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
 
-  <!-- ACCUEIL -->
+  <!-- ÉTAPE 1 : INTRO -->
   <form id="accueil">
     <block>
       <prompt bargein="true">
         Bienvenue à l’Association Valentin Haüy.
-        Pour continuer, entrez votre numéro de département en deux étapes :
-        Tapez le premier chiffre, puis le second après l’annonce.
+        Pour continuer, tapez le premier chiffre de votre département.
       </prompt>
       <goto next="#dept1"/>
     </block>
   </form>
 
-  <!-- PREMIER CHIFFRE -->
+  <!-- ÉTAPE 2 : PREMIER CHIFFRE -->
   <form id="dept1">
     <field name="d1">
-      <prompt>Veuillez taper le premier chiffre de votre département.</prompt>
+      <prompt>Tapez le premier chiffre.</prompt>
       <grammar mode="dtmf" src="builtin:dtmf/digits?length=1"/>
-      <noinput><prompt>Je n’ai rien entendu. Réessayez.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entrée invalide.</prompt><reprompt/></nomatch>
       <filled>
-        <prompt>Vous avez tapé <value expr="d1"/>.</prompt>
+        <prompt>Merci, vous avez tapé <value expr="d1"/>.</prompt>
         <goto next="#dept2"/>
       </filled>
     </field>
   </form>
 
-  <!-- SECOND CHIFFRE -->
+  <!-- ÉTAPE 3 : SECOND CHIFFRE -->
   <form id="dept2">
     <field name="d2">
       <prompt>Maintenant, tapez le second chiffre de votre département.</prompt>
       <grammar mode="dtmf" src="builtin:dtmf/digits?length=1"/>
-      <noinput><prompt>Je n’ai rien entendu. Réessayez.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entrée invalide.</prompt><reprompt/></nomatch>
       <filled>
-        <assign name="dept" expr="d1 + d2"/>
-        <goto next="#announce_committee"/>
+        <prompt>
+          Vous avez indiqué le département <value expr="d1"/> <value expr="d2"/>.
+        </prompt>
+        <goto next="#menu_principal"/>
       </filled>
     </field>
-  </form>
-
-  <!-- ANNONCE DU COMITÉ -->
-  <form id="announce_committee">
-    <block>
-      <prompt>
-        <if cond="dept == '75'">
-          Vous êtes rattaché au Comité de Paris.
-        <elseif cond="dept == '92'"/>
-          Vous êtes dans le département 92.
-          Tapez 1 pour Hauts-de-Seine Nord, 2 pour Hauts-de-Seine Sud.
-        <elseif cond="dept == '93'"/>
-          Vous êtes rattaché au Comité de Seine-Saint-Denis.
-        <elseif cond="dept == '94'"/>
-          Vous êtes rattaché au Comité du Val-de-Marne.
-        <else/>
-          Vous êtes rattaché au Comité du département <value expr="dept"/>.
-        </if>
-      </prompt>
-
-      <if cond="dept == '92'">
-        <goto next="#menu_92"/>
-      <else/>
-        <goto next="#menu_principal"/>
-      </if>
-    </block>
-  </form>
-
-  <!-- COMITÉ 92 -->
-  <menu id="menu_92" dtmf="true">
-    <prompt>Tapez 1 pour Hauts-de-Seine Nord, 2 pour Hauts-de-Seine Sud, 9 pour changer de département.</prompt>
-    <choice dtmf="1" next="#set_92_nord"><prompt>1 Nord</prompt></choice>
-    <choice dtmf="2" next="#set_92_sud"><prompt>2 Sud</prompt></choice>
-    <choice dtmf="9" next="#accueil"><prompt>9 changer de département</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
-  </menu>
-
-  <form id="set_92_nord">
-    <block>
-      <prompt>Vous êtes rattaché au Comité Hauts-de-Seine Nord.</prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
-
-  <form id="set_92_sud">
-    <block>
-      <prompt>Vous êtes rattaché au Comité Hauts-de-Seine Sud.</prompt>
-      <goto next="#menu_principal"/>
-    </block>
   </form>
 
   <!-- MENU PRINCIPAL -->
@@ -103,32 +50,34 @@
   </form>
 
   <menu id="menu_principal" dtmf="true">
-    <prompt>Menu principal. 1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité, 8 changer de département, 9 quitter.</prompt>
-    <choice dtmf="1" next="#menu_sport_intro"><prompt>1 sport</prompt></choice>
-    <choice dtmf="2" next="#menu_loisir_intro"><prompt>2 loisir</prompt></choice>
-    <choice dtmf="3" next="#menu_sortie_intro"><prompt>3 sortie</prompt></choice>
-    <choice dtmf="4" next="#menu_sante_intro"><prompt>4 santé</prompt></choice>
-    <choice dtmf="5" next="#menu_actu_intro"><prompt>5 actualité</prompt></choice>
+    <prompt>
+      Menu principal. Choisissez une rubrique :
+      1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité, 8 changer de département, 9 quitter.
+    </prompt>
+    <choice dtmf="1" next="#sport"><prompt>1 sport</prompt></choice>
+    <choice dtmf="2" next="#loisir"><prompt>2 loisir</prompt></choice>
+    <choice dtmf="3" next="#sortie"><prompt>3 sortie</prompt></choice>
+    <choice dtmf="4" next="#sante"><prompt>4 santé</prompt></choice>
+    <choice dtmf="5" next="#actu"><prompt>5 actualité</prompt></choice>
     <choice dtmf="8" next="#accueil"><prompt>8 changer de département</prompt></choice>
     <choice dtmf="9" next="#fin"><prompt>9 quitter</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
   </menu>
 
-  <!-- Sous-menus identiques à la version précédente (inchangés pour stabilité) -->
-  <form id="menu_sport_intro">
+  <!-- RUBRIQUES SIMPLES -->
+  <form id="sport"><block><prompt>Rubrique sport.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="sante"><block><prompt>Rubrique santé.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="actu"><block><prompt>Rubrique actualité.</prompt><goto next="#menu_principal"/></block></form>
+
+  <!-- FIN -->
+  <form id="fin">
     <block>
-      <prompt>Vous êtes dans la rubrique sport. 1 football, 2 tennis, 9 retour.</prompt>
-      <goto next="#menu_sport"/>
+      <prompt>Merci pour votre appel. Au revoir.</prompt>
+      <disconnect/>
     </block>
   </form>
-  <menu id="menu_sport" dtmf="true">
-    <prompt>Sport. 1 football, 2 tennis, 9 retour.</prompt>
-    <choice dtmf="1" next="#football"><prompt>1 football</prompt></choice>
-    <choice dtmf="2" next="#tennis"><prompt>2 tennis</prompt></choice>
-    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-  </menu>
-  <form id="football"><block><prompt>Infos football.</prompt><goto next="#menu_sport_intro"/></block></form>
-  <form id="tennis"><block><prompt>Infos tennis.</prompt><goto next="#menu_sport_intro"/></block></form>
-
-  <form id="fin"><block><prompt>Merci pour votre appel. Au revoir.</prompt><disconnect/></block></form>
 
 </vxml>
