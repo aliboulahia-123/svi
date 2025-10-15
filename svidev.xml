@@ -1,60 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
+  <!-- ACCUEIL -->
   <form id="accueil">
     <block>
       <prompt bargein="true">
-        Bienvenue. Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
-        Appuyez sur dièse pour répéter.
+        Bienvenue à l’Association Valentin Haüy.
+        Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
+        Appuyez sur dièse pour répéter ce menu.
       </prompt>
       <goto next="#menu_principal"/>
     </block>
   </form>
 
+  <!-- MENU PRINCIPAL -->
   <menu id="menu_principal" dtmf="true">
-    <choice dtmf="1" next="#menu_sport"><prompt>1 pour sport</prompt></choice>
-    <choice dtmf="2" next="#loisir"><prompt>2 pour loisir</prompt></choice>
-    <choice dtmf="3" next="#sortie"><prompt>3 pour sortie</prompt></choice>
-    <choice dtmf="4" next="#sante"><prompt>4 pour santé</prompt></choice>
-    <choice dtmf="5" next="#actu"><prompt>5 pour actualité</prompt></choice>
-    <noinput><prompt>Je n'ai rien entendu. Répétez votre choix.</prompt><reprompt/></noinput>
+    <prompt>
+      Menu principal. Choisissez une rubrique :
+      1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité.
+      9 pour quitter.
+    </prompt>
+    <choice dtmf="1" next="#menu_sport_intro"><prompt>1 sport</prompt></choice>
+    <choice dtmf="2" next="#menu_loisir_intro"><prompt>2 loisir</prompt></choice>
+    <choice dtmf="3" next="#menu_sortie_intro"><prompt>3 sortie</prompt></choice>
+    <choice dtmf="4" next="#menu_sante_intro"><prompt>4 santé</prompt></choice>
+    <choice dtmf="5" next="#menu_actu_intro"><prompt>5 actualité</prompt></choice>
+    <choice dtmf="9" next="#fin"><prompt>9 quitter</prompt></choice>
+    <noinput><prompt>Je n’ai rien entendu. Répétez votre choix.</prompt><reprompt/></noinput>
     <nomatch><prompt>Choix invalide. Répétez votre choix.</prompt><reprompt/></nomatch>
   </menu>
 
-  <!-- Sous-menu SPORT -->
+  <!-- RUBRIQUE SPORT -->
   <form id="menu_sport_intro">
     <block>
-      <prompt>Rubrique sport. Tapez 1 pour football, 2 pour tennis, 9 pour retour.</prompt>
+      <prompt>
+        Vous êtes dans la rubrique sport.
+        Tapez 1 pour football, 2 pour tennis, 9 pour revenir au menu principal.
+      </prompt>
       <goto next="#menu_sport"/>
     </block>
   </form>
 
   <menu id="menu_sport" dtmf="true">
+    <prompt>Sport. 1 football, 2 tennis, 9 retour.</prompt>
     <choice dtmf="1" next="#football"><prompt>1 football</prompt></choice>
     <choice dtmf="2" next="#tennis"><prompt>2 tennis</prompt></choice>
     <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d'entrée. Répétez.</prompt><reprompt/></noinput>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
     <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
   </menu>
 
   <form id="football">
     <block>
-      <prompt>Dernières infos football. (À remplacer.)</prompt>
+      <prompt>Dernières infos football. (Exemple de contenu.)</prompt>
       <goto next="#menu_sport_intro"/>
     </block>
   </form>
 
   <form id="tennis">
     <block>
-      <prompt>Actu tennis. (À remplacer.)</prompt>
+      <prompt>Actualités du tennis. (Exemple de contenu.)</prompt>
       <goto next="#menu_sport_intro"/>
     </block>
   </form>
 
-  <!-- Squelettes autres rubriques -->
-  <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sante"><block><prompt>Rubrique santé.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="actu"><block><prompt>Rubrique actualité.</prompt><goto next="#menu_principal"/></block></form>
+  <!-- RUBRIQUE LOISIR -->
+  <form id="menu_loisir_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique loisir.
+        Tapez 1 pour activités manuelles, 2 pour jeux, 9 pour retour au menu principal.
+      </prompt>
+      <goto next="#menu_loisir"/>
+    </block>
+  </form>
 
-  <form id="fin"><block><prompt>Merci. Au revoir.</prompt><disconnect/></block></form>
+  <menu id="menu_loisir" dtmf="true">
+    <prompt>Loisir. 1 activités manuelles, 2 jeux, 9 retour.</prompt>
+    <choice dtmf="1" next="#loisir_activite"><prompt>1 activités</prompt></choice>
+    <choice dtmf="2" next="#loisir_jeux"><prompt>2 jeux</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="loisir_activite"><block><prompt>Ateliers et activités de loisirs.</prompt><goto next="#menu_loisir_intro"/></block></form>
+  <form id="loisir_jeux"><block><prompt>Clubs de jeux et moments conviviaux.</prompt><goto next="#menu_loisir_intro"/></block></form>
+
+  <!-- RUBRIQUE SORTIE -->
+  <form id="menu_sortie_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique sortie.
+        Tapez 1 pour culture, 2 pour nature, 9 pour retour au menu principal.
+      </prompt>
+      <goto next="#menu_sortie"/>
+    </block>
+  </form>
+
+  <menu id="menu_sortie" dtmf="true">
+    <prompt>Sortie. 1 culture, 2 nature, 9 retour.</prompt>
+    <choice dtmf="1" next="#sortie_culture"><prompt>1 culture</prompt></choice>
+    <choice dtmf="2" next="#sortie_nature"><prompt>2 nature</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="sortie_culture"><block><prompt>Visites de musées, théâtres accessibles.</prompt><goto next="#menu_sortie_intro"/></block></form>
+  <form id="sortie_nature"><block><prompt>Balades et activités en plein air.</prompt><goto next="#menu_sortie_intro"/></block></form>
+
+  <!-- RUBRIQUE SANTÉ -->
+  <form id="menu_sante_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique santé.
+        Tapez 1 pour conseils, 2 pour accompagnement, 9 pour retour au menu principal.
+      </prompt>
+      <goto next="#menu_sante"/>
+    </block>
+  </form>
+
+  <menu id="menu_sante" dtmf="true">
+    <prompt>Santé. 1 conseils, 2 accompagnement, 9 retour.</prompt>
+    <choice dtmf="1" next="#sante_conseil"><prompt>1 conseils</prompt></choice>
+    <choice dtmf="2" next="#sante_accompagnement"><prompt>2 accompagnement</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="sante_conseil"><block><prompt>Conseils bien-être et prévention.</prompt><goto next="#menu_sante_intro"/></block></form>
+  <form id="sante_accompagnement"><block><prompt>Accompagnement santé et rendez-vous adaptés.</prompt><goto next="#menu_sante_intro"/></block></form>
+
+  <!-- RUBRIQUE ACTUALITÉ -->
+  <form id="menu_actu_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique actualité.
+        Tapez 1 pour informations locales, 2 pour actualités nationales, 9 pour retour.
+      </prompt>
+      <goto next="#menu_actu"/>
+    </block>
+  </form>
+
+  <menu id="menu_actu" dtmf="true">
+    <prompt>Actualité. 1 locales, 2 nationales, 9 retour.</prompt>
+    <choice dtmf="1" next="#actu_locale"><prompt>1 locales</prompt></choice>
+    <choice dtmf="2" next="#actu_nationale"><prompt>2 nationales</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="actu_locale"><block><prompt>Actualités locales de votre comité.</prompt><goto next="#menu_actu_intro"/></block></form>
+  <form id="actu_nationale"><block><prompt>Actualités nationales de l’Association Valentin Haüy.</prompt><goto next="#menu_actu_intro"/></block></form>
+
+  <!-- FIN -->
+  <form id="fin">
+    <block>
+      <prompt>Merci pour votre appel. Au revoir.</prompt>
+      <disconnect/>
+    </block>
+  </form>
 </vxml>
