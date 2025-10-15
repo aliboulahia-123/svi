@@ -1,41 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" xml:lang="fr-FR">
-
-  <var name="dept"/>
-  <var name="deptLabel"/>
-
-  <form id="accueil">
+  <form id="t">
     <block>
       <prompt bargein="true">
-        Bienvenue. Deux chiffres pour la métropole, trois pour l'outre-mer.
+        Bienvenue. Deux chiffres pour la metropole, trois pour l outre mer.
       </prompt>
-      <goto next="#dept_input"/>
     </block>
-  </form>
 
-  <form id="dept_input">
     <field name="dept">
-      <prompt bargein="true">Tapez maintenant le numéro du département.</prompt>
-
-      <!-- ✅ builtin OVH: PAS de termchar, PAS de SRGS custom -->
+      <prompt bargein="true">Tapez maintenant le numero du departement.</prompt>
       <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
 
-      <noinput><prompt>Je n'ai rien entendu. Réessayez.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entrée invalide. Réessayez.</prompt><reprompt/></nomatch>
+      <noinput><prompt>Je n ai rien entendu. Reessayez.</prompt><reprompt/></noinput>
+      <nomatch><prompt>Entree invalide. Reessayez.</prompt><reprompt/></nomatch>
 
       <filled>
-        <!-- 2A/2B via 201/202 -->
-        <if cond="dept == '201'">
-          <assign name="deptLabel" expr="'2A'"/>
-        <elseif cond="dept == '202'"/>
-          <assign name="deptLabel" expr="'2B'"/>
-        <else/>
-          <assign name="deptLabel" expr="dept"/>
-        </if>
-        <prompt bargein="true">Vous avez saisi <value expr="deptLabel"/>.</prompt>
+        <prompt bargein="true">Vous avez saisi <value expr="dept"/>.</prompt>
         <disconnect/>
       </filled>
     </field>
   </form>
-
 </vxml>
