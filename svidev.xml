@@ -3,7 +3,7 @@
   <form id="fin">
     <block>
       <prompt bargein="false">
-        Cette ligne est dédiée au svi de developpement.
+        HAMLET Le Danemark est une prison. ROSENCRANTZ Alors le monde en est une. HAMLET Une belle prison ; où il y a beaucoup de cachots, de quartiers et de donjons, le Danemark étant l'un des pires. ROSENCRANTZ Nous ne le pensons pas, mon seigneur. HAMLET Eh bien, alors, ce n'en est pas une pour vous ; car il n'y a rien de bon ou de mauvais, mais la pensée le fait ainsi : pour moi c'est une prison. ROSENCRANTZ Pourquoi alors, votre ambition en fait une ; c'est trop étroit pour votre esprit. HAMLET Oh Dieu, je pourrais être enfermé dans une coquille de noix et me considérer comme un roi d'un espace infini, si je n'avais pas de mauvais rêves. GUILDENSTERN Ces rêves sont en effet de l'ambition, car la substance même de l'ambitieux n'est que l'ombre d'un rêve. HAMLET Un rêve lui-même n'est qu'une ombre. ROSENCRANTZ Vraiment, et je considère l'ambition comme d'une qualité si aérienne et légère qu'elle n'est que l'ombre d'une ombre. HAMLET Alors nos mendiants sont des corps, et nos monarques et héros étendus sont les ombres des mendiants. Allons-nous à la cour ? car, par ma foi, je ne peux pas raisonner..
       </prompt>
       <disconnect/>
     </block>
