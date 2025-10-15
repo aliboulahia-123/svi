@@ -1,45 +1,382 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
-  <property name="inputmodes" value="voice"/>
-  <property name="timeout" value="6s"/>
-  <property name="confidencelevel" value="0.35"/>
 
-  <form id="t">
-    <field name="choix" modal="true">
-      <prompt bargein="true">Dites l'une de ces rubriques : sport, loisir, sortie, santé, actualité.</prompt>
+  <!-- ========================
+       RÈGLES & CONTRÔLES GLOBAUX
+       ======================== -->
+  <!-- Raccourcis DTMF disponibles dans (presque) tous les prompts :
+       * = répéter, 9 = retour, 0 = menu principal, # = quitter        -->
 
-      <grammar xml:lang="fr-FR" mode="voice" root="TOP" type="application/srgs+xml">
-        <rule id="TOP" scope="public">
+  <var name="dept"/>
+  <var name="deptLabel"/>
+  <var name="committee"/>
+  <var name="committeeList"/>   <!-- pour départements à comités multiples -->
+  <var name="lastForm" expr="'#accueil'"/>
+
+  <!-- ========================
+       ACCUEIL
+       ======================== -->
+  <form id="accueil">
+    <block>
+      <prompt bargein="true">
+        Bienvenue à l'Association Valentin Haüy.
+        Pour être orienté vers votre comité local, composez le numéro de votre département :
+        deux chiffres pour la métropole (exemple zéro un, zéro deux...),
+        trois chiffres pour l'outre mer (neuf sept un à neuf sept six).
+        Pour la Corse : tapez vingt puis un pour Corse du Sud, ou vingt puis deux pour Haute Corse.
+        À tout moment : étoile pour répéter, neuf pour revenir, zéro pour le menu principal, dièse pour quitter.
+      </prompt>
+    </block>
+
+    <!-- Saisie du département : 2 ou 3 chiffres (+ cas spécial 20{1|2}) -->
+    <field name="dept" modal="true">
+      <grammar mode="dtmf" root="root" type="application/srgs+xml">
+        <rule id="root" scope="public">
           <one-of>
-            <item> sport     <tag>out="sport";</tag></item>
-            <item> loisirs   <tag>out="loisir";</tag></item>
-            <item> loisir    <tag>out="loisir";</tag></item>
-            <item> sortie    <tag>out="sortie";</tag></item>
-            <item> santé     <tag>out="sante";</tag></item>
-            <item> sante     <tag>out="sante";</tag></item>
-            <item> actualité <tag>out="actualite";</tag></item>
-            <item> actualités<tag>out="actualite";</tag></item>
+            <!-- 2 chiffres métropole -->
+            <item>00-99</item>
+            <!-- 3 chiffres outre-mer -->
+            <item>000-999</item>
           </one-of>
         </rule>
       </grammar>
 
       <noinput>
-        <prompt>Je n'ai rien entendu.</prompt>
+        <prompt>Je n'ai rien entendu. Composez le numéro du département.</prompt>
         <reprompt/>
       </noinput>
+
       <nomatch>
-        <prompt>Je n'ai pas compris. Répétez.</prompt>
+        <prompt>Entrée invalide. Saisissez deux chiffres (métropole) ou trois chiffres (outre mer).</prompt>
         <reprompt/>
       </nomatch>
 
       <filled>
-        <prompt>J'ai compris : <value expr="choix"/>.</prompt>
-        <goto next="#fin"/>
+        <!-- Normalisation & cas Corse -->
+        <if cond="dept == '201'">
+          <assign name="deptLabel" expr="'2A'"/>
+        <elseif cond="dept == '202'"/>
+          <assign name="deptLabel" expr="'2B'"/>
+        <elseif cond="string(length(dept)) == '2'"/>
+          <assign name="deptLabel" expr="dept"/>
+        <elseif cond="string(length(dept)) == '3'"/>
+          <assign name="deptLabel" expr="dept"/>
+        <else/>
+          <assign name="deptLabel" expr="dept"/>
+        </if>
+        <goto next="#resolve_committee"/>
       </filled>
     </field>
   </form>
 
-  <form id="fin">
-    <block><prompt>Test terminé. Au revoir.</prompt><disconnect/></block>
+  <!-- ========================
+       RÉSOLUTION DU COMITÉ
+       Remplace/complète les mappings ci-dessous selon votre cartographie réelle
+       ======================== -->
+  <form id="resolve_committee">
+    <block>
+      <!-- Exemples de mapping. À étendre. -->
+      <if cond="deptLabel == '75'">
+        <assign name="committee" expr="'Comité de Paris'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '92'"/>
+        <!-- 92 : deux comités -> on propose un choix -->
+        <assign name="committeeList" expr="'Hauts-de-Seine Nord|Hauts-de-Seine Sud'"/>
+        <goto next="#choose_92"/>
+      <elseif cond="deptLabel == '93'"/>
+        <assign name="committee" expr="'Comité de Seine-Saint-Denis'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '94'"/>
+        <assign name="committee" expr="'Comité du Val-de-Marne'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '13'"/>
+        <assign name="committee" expr="'Comité des Bouches-du-Rhône'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '33'"/>
+        <assign name="committee" expr="'Comité de Gironde'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '2A'"/>
+        <assign name="committee" expr="'Comité Corse-du-Sud'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '2B'"/>
+        <assign name="committee" expr="'Comité Haute-Corse'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '971'"/>
+        <assign name="committee" expr="'Comité de Guadeloupe'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '972'"/>
+        <assign name="committee" expr="'Comité de Martinique'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '973'"/>
+        <assign name="committee" expr="'Comité de Guyane'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '974'"/>
+        <assign name="committee" expr="'Comité de La Réunion'"/>
+        <goto next="#announce_committee"/>
+      <elseif cond="deptLabel == '976'"/>
+        <assign name="committee" expr="'Comité de Mayotte'"/>
+        <goto next="#announce_committee"/>
+      <else/>
+        <assign name="committee" expr="'Comité AVH du département ' + deptLabel"/>
+        <goto next="#announce_committee"/>
+      </if>
+    </block>
   </form>
+
+  <!-- Cas spécial 92 : deux comités -->
+  <menu id="choose_92" dtmf="true">
+    <prompt>
+      Département 92, Hauts-de-Seine. Plusieurs comités sont disponibles.
+      Tapez 1 pour Hauts-de-Seine Nord. Tapez 2 pour Hauts-de-Seine Sud.
+    </prompt>
+    <choice dtmf="1" next="#set_92_nord"><prompt>1 Nord</prompt></choice>
+    <choice dtmf="2" next="#set_92_sud"><prompt>2 Sud</prompt></choice>
+    <noinput><prompt>Pas d'entrée. Répétez votre choix.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="set_92_nord">
+    <block><assign name="committee" expr="'Comité Hauts-de-Seine Nord'"/><goto next="#announce_committee"/></block>
+  </form>
+  <form id="set_92_sud">
+    <block><assign name="committee" expr="'Comité Hauts-de-Seine Sud'"/><goto next="#announce_committee"/></block>
+  </form>
+
+  <!-- Annonce du comité puis menu principal -->
+  <form id="announce_committee">
+    <block>
+      <prompt>
+        Vous êtes rattaché au {committee}. 
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <!-- ========================
+       MENU PRINCIPAL (Rubriques)
+       ======================== -->
+  <form id="menu_principal_intro">
+    <block>
+      <assign name="lastForm" expr="'#menu_principal_intro'"/>
+      <prompt bargein="true">
+        Menu principal. Tapez :
+        1 Activités et ateliers. 
+        2 Sport et loisirs adaptés.
+        3 Aides techniques et matériel.
+        4 Bibliothèque Eole et lecture.
+        5 Accompagnement social et droits.
+        6 Formation, emploi et numérique accessible.
+        7 Culture et sorties.
+        8 Bénévolat et participation.
+        9 Retour (département).
+        0 Répéter ce menu. 
+        Dièse quitter.
+      </prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <menu id="menu_principal" dtmf="true">
+    <choice dtmf="1" next="#r_activites"><prompt>1 Activités et ateliers</prompt></choice>
+    <choice dtmf="2" next="#r_sport"><prompt>2 Sport et loisirs</prompt></choice>
+    <choice dtmf="3" next="#r_aides"><prompt>3 Aides techniques</prompt></choice>
+    <choice dtmf="4" next="#r_eole"><prompt>4 Bibliothèque Eole</prompt></choice>
+    <choice dtmf="5" next="#r_social"><prompt>5 Social et droits</prompt></choice>
+    <choice dtmf="6" next="#r_emploi"><prompt>6 Emploi et numérique</prompt></choice>
+    <choice dtmf="7" next="#r_culture"><prompt>7 Culture et sorties</prompt></choice>
+    <choice dtmf="8" next="#r_benevolat"><prompt>8 Bénévolat</prompt></choice>
+    <choice dtmf="9" next="#accueil"><prompt>9 Changer de département</prompt></choice>
+    <choice dtmf="0" next="#menu_principal_intro"><prompt>0 Répéter</prompt></choice>
+    <choice dtmf="#" next="#fin"><prompt>Dièse Quitter</prompt></choice>
+    <noinput><prompt>Pas d'entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <!-- ========================
+       RUBRIQUES (exemples à adapter)
+       Chacune propose : info courte + actions types + contrôles universels
+       ======================== -->
+
+  <form id="r_activites">
+    <block>
+      <assign name="lastForm" expr="'#r_activites'"/>
+      <prompt>
+        {committee} — Activités et ateliers.
+        Exemples : ateliers de vie quotidienne, informatique adaptée, aide à la mobilité.
+        Pour connaître le programme détaillé, tapez 1.
+        Pour revenir au menu principal, tapez 9.
+        Pour répéter, tapez 0. Pour quitter, tapez dièse.
+      </prompt>
+      <goto next="#r_activites_menu"/>
+    </block>
+  </form>
+
+  <menu id="r_activites_menu" dtmf="true">
+    <choice dtmf="1" next="#info_programme"><prompt>1 Programme détaillé</prompt></choice>
+    <choice dtmf="9" next="#menu_principal_intro"><prompt>9 Menu principal</prompt></choice>
+    <choice dtmf="0" next="#r_activites"><prompt>0 Répéter</prompt></choice>
+    <choice dtmf="#" next="#fin"><prompt>Dièse Quitter</prompt></choice>
+    <noinput><prompt>Pas d'entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="info_programme">
+    <block>
+      <prompt>
+        Pour le programme mis à jour, consultez le site du comité ou contactez l'accueil.
+        Vous pouvez revenir au menu principal avec 9, ou quitter avec dièse.
+      </prompt>
+      <goto next="#r_activites_menu"/>
+    </block>
+  </form>
+
+  <form id="r_sport">
+    <block>
+      <assign name="lastForm" expr="'#r_sport'"/>
+      <prompt>
+        {committee} — Sport et loisirs adaptés : marche, tandem, danse adaptée, jeux, etc.
+        Tapez 1 pour les activités sportives, 2 pour les loisirs.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_sport_menu"/>
+    </block>
+  </form>
+  <menu id="r_sport_menu" dtmf="true">
+    <choice dtmf="1" next="#r_sport_detail"><prompt>1 Sports</prompt></choice>
+    <choice dtmf="2" next="#r_loisirs_detail"><prompt>2 Loisirs</prompt></choice>
+    <choice dtmf="9" next="#menu_principal_intro"><prompt>9 Menu principal</prompt></choice>
+    <choice dtmf="0" next="#r_sport"><prompt>0 Répéter</prompt></choice>
+    <choice dtmf="#" next="#fin"><prompt>Dièse Quitter</prompt></choice>
+  </menu>
+  <form id="r_sport_detail"><block><prompt>Exemples : cécifoot, tandem, natation. Renseignez-vous auprès du comité.</prompt><goto next="#r_sport_menu"/></block></form>
+  <form id="r_loisirs_detail"><block><prompt>Exemples : clubs de jeux, sorties conviviales.</prompt><goto next="#r_sport_menu"/></block></form>
+
+  <form id="r_aides">
+    <block>
+      <assign name="lastForm" expr="'#r_aides'"/>
+      <prompt>
+        {committee} — Aides techniques et matériel : cannes, loupes, lecteurs Daisy, smartphones accessibles.
+        Tapez 1 pour un conseil individuel, 2 pour les démonstrations au comité.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_aides_menu"/>
+    </block>
+  </form>
+  <menu id="r_aides_menu" dtmf="true">
+    <choice dtmf="1" next="#r_aides_conseil"><prompt>1 Conseils</prompt></choice>
+    <choice dtmf="2" next="#r_aides_demo"><prompt>2 Démonstrations</prompt></choice>
+    <choice dtmf="9" next="#menu_principal_intro"><prompt>9 Menu principal</prompt></choice>
+    <choice dtmf="0" next="#r_aides"><prompt>0 Répéter</prompt></choice>
+    <choice dtmf="#" next="#fin"><prompt>Dièse Quitter</prompt></choice>
+  </menu>
+  <form id="r_aides_conseil"><block><prompt>Prise de rendez-vous conseillée.</prompt><goto next="#r_aides_menu"/></block></form>
+  <form id="r_aides_demo"><block><prompt>Prochaines dates disponibles au comité.</prompt><goto next="#r_aides_menu"/></block></form>
+
+  <form id="r_eole">
+    <block>
+      <assign name="lastForm" expr="'#r_eole'"/>
+      <prompt>
+        Bibliothèque Eole : livres audio Daisy, gros caractères, braille numérique.
+        Tapez 1 pour s'inscrire, 2 pour emprunter, 3 pour l'aide à l'écoute.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_eole_menu"/>
+    </block>
+  </form>
+  <menu id="r_eole_menu" dtmf="true">
+    <choice dtmf="1" next="#r_eole_insc"/><choice dtmf="2" next="#r_eole_emprunt"/><choice dtmf="3" next="#r_eole_aide"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_eole"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_eole_insc"><block><prompt>Inscription possible en ligne sur avh point asso point fr, rubrique Eole, ou via le comité.</prompt><goto next="#r_eole_menu"/></block></form>
+  <form id="r_eole_emprunt"><block><prompt>Choix de titres et prêt par téléchargement ou envoi de CD Daisy.</prompt><goto next="#r_eole_menu"/></block></form>
+  <form id="r_eole_aide"><block><prompt>Accompagnement à l'utilisation de lecteurs Daisy et applications mobiles.</prompt><goto next="#r_eole_menu"/></block></form>
+
+  <form id="r_social">
+    <block>
+      <assign name="lastForm" expr="'#r_social'"/>
+      <prompt>
+        Accompagnement social et droits : MDPH, mobilité, aides financières.
+        Tapez 1 pour être recontacté, 2 pour les permanences.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_social_menu"/>
+    </block>
+  </form>
+  <menu id="r_social_menu" dtmf="true">
+    <choice dtmf="1" next="#r_contact"/><choice dtmf="2" next="#r_permanences"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_social"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_contact"><block><prompt>Laissez vos coordonnées à l'accueil du comité pour un rappel.</prompt><goto next="#r_social_menu"/></block></form>
+  <form id="r_permanences"><block><prompt>Consultez les horaires des permanences du comité.</prompt><goto next="#r_social_menu"/></block></form>
+
+  <form id="r_emploi">
+    <block>
+      <assign name="lastForm" expr="'#r_emploi'"/>
+      <prompt>
+        Formation, emploi et numérique accessible.
+        Tapez 1 pour l'accompagnement vers l'emploi, 2 pour les ateliers numériques accessibles.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_emploi_menu"/>
+    </block>
+  </form>
+  <menu id="r_emploi_menu" dtmf="true">
+    <choice dtmf="1" next="#r_emploi_accomp"/><choice dtmf="2" next="#r_emploi_numerique"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_emploi"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_emploi_accomp"><block><prompt>Orientation, CV, entretiens, partenariats employeurs.</prompt><goto next="#r_emploi_menu"/></block></form>
+  <form id="r_emploi_numerique"><block><prompt>Découverte de lecteurs d'écran et outils d'accessibilité.</prompt><goto next="#r_emploi_menu"/></block></form>
+
+  <form id="r_culture">
+    <block>
+      <assign name="lastForm" expr="'#r_culture'"/>
+      <prompt>
+        Culture et sorties : visites tactiles, audiodescription, événements locaux.
+        Tapez 1 pour l'agenda local, 2 pour les partenariats.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_culture_menu"/>
+    </block>
+  </form>
+  <menu id="r_culture_menu" dtmf="true">
+    <choice dtmf="1" next="#r_agenda"/><choice dtmf="2" next="#r_partenariats"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_culture"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_agenda"><block><prompt>Agenda disponible sur le site du comité et à l'accueil.</prompt><goto next="#r_culture_menu"/></block></form>
+  <form id="r_partenariats"><block><prompt>Musées, théâtres et associations partenaires accessibles.</prompt><goto next="#r_culture_menu"/></block></form>
+
+  <form id="r_benevolat">
+    <block>
+      <assign name="lastForm" expr="'#r_benevolat'"/>
+      <prompt>
+        Bénévolat : accompagnement, lecture, ateliers.
+        Tapez 1 pour proposer votre aide. 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_benevolat_menu"/>
+    </block>
+  </form>
+  <menu id="r_benevolat_menu" dtmf="true">
+    <choice dtmf="1" next="#r_benevolat_contact"/>
+    <choice dtmf="9" next="#menu_principal_intro"/>
+    <choice dtmf="0" next="#r_benevolat"/>
+    <choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_benevolat_contact"><block><prompt>Merci ! L'accueil du comité vous informera des besoins actuels.</prompt><goto next="#r_benevolat_menu"/></block></form>
+
+  <!-- ========================
+       ACTUALITÉS (optionnel)
+       Si vous voulez une rubrique "Actualités", ajoutez une entrée
+       vers une page qui lit un bref résumé et redirige vers le site.
+       ======================== -->
+
+  <!-- ========================
+       FIN
+       ======================== -->
+  <form id="fin">
+    <block>
+      <prompt>Merci pour votre appel. Au revoir.</prompt>
+      <disconnect/>
+    </block>
+  </form>
+
 </vxml>
