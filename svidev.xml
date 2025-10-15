@@ -1,12 +1,168 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
+  <form id="accueil">
+    <block>
+      <prompt bargein="true">
+        Bienvenue. Pour naviguer, vous pouvez dire le nom de la rubrique,
+        ou taper un chiffre. Les rubriques sont : sport, loisir, sortie, santé, actualité.
+      </prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <!-- ===== MENU PRINCIPAL (voix + DTMF) ===== -->
+  <form id="menu_principal">
+    <field name="rubrique" modal="true">
+      <prompt bargein="true">
+        Dites une rubrique ou tapez :
+        1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
+      </prompt>
+
+      <!-- Grammaire VOCALE (SRGS XML) -->
+      <grammar xml:lang="fr-FR" mode="voice" root="TOP" type="application/srgs+xml">
+        <rule id="TOP" scope="public">
+          <one-of>
+            <item> sport <tag>out="sport";</tag></item>
+            <item> loisirs <tag>out="loisir";</tag></item>
+            <item> loisir <tag>out="loisir";</tag></item>
+            <item> sortie <tag>out="sortie";</tag></item>
+            <item> santé <tag>out="sante";</tag></item>
+            <item> actualité <tag>out="actualite";</tag></item>
+            <item> actualités <tag>out="actualite";</tag></item>
+          </one-of>
+        </rule>
+      </grammar>
+
+      <!-- Grammaire DTMF -->
+      <grammar mode="dtmf" root="DTMF" type="application/srgs+xml">
+        <rule id="DTMF" scope="public">
+          <one-of>
+            <item>1<tag>out="sport";</tag></item>
+            <item>2<tag>out="loisir";</tag></item>
+            <item>3<tag>out="sortie";</tag></item>
+            <item>4<tag>out="sante";</tag></item>
+            <item>5<tag>out="actualite";</tag></item>
+          </one-of>
+        </rule>
+      </grammar>
+
+      <noinput>
+        <prompt>Je n'ai rien entendu.</prompt>
+        <reprompt/>
+      </noinput>
+
+      <nomatch>
+        <prompt>Désolé, choix inconnu. Répétez ou tapez un chiffre.</prompt>
+        <reprompt/>
+      </nomatch>
+
+      <filled>
+        <if cond="rubrique == 'sport'">
+          <goto next="#menu_sport"/>
+        <elseif cond="rubrique == 'loisir'"/>
+          <goto next="#menu_loisir"/>
+        <elseif cond="rubrique == 'sortie'"/>
+          <goto next="#menu_sortie"/>
+        <elseif cond="rubrique == 'sante'"/>
+          <goto next="#menu_sante"/>
+        <elseif cond="rubrique == 'actualite'"/>
+          <goto next="#menu_actu"/>
+        <else/>
+          <prompt>Problème de sélection. On reprend.</prompt>
+          <clear namelist="rubrique"/>
+          <reprompt/>
+        </if>
+      </filled>
+    </field>
+  </form>
+
+  <!-- ===== EXEMPLE SOUS-MENU : SPORT ===== -->
+  <form id="menu_sport">
+    <field name="choix_sport" modal="true">
+      <prompt bargein="true">
+        Rubrique sport. Dites football, tennis, ou retour. 
+        Ou tapez 1 pour football, 2 pour tennis, 9 pour retour.
+      </prompt>
+
+      <grammar xml:lang="fr-FR" mode="voice" root="TOP" type="application/srgs+xml">
+        <rule id="TOP" scope="public">
+          <one-of>
+            <item> football <tag>out="football";</tag></item>
+            <item> tennis <tag>out="tennis";</tag></item>
+            <item> retour <tag>out="retour";</tag></item>
+          </one-of>
+        </rule>
+      </grammar>
+
+      <grammar mode="dtmf" root="DTMF" type="application/srgs+xml">
+        <rule id="DTMF" scope="public">
+          <one-of>
+            <item>1<tag>out="football";</tag></item>
+            <item>2<tag>out="tennis";</tag></item>
+            <item>9<tag>out="retour";</tag></item>
+          </one-of>
+        </rule>
+      </grammar>
+
+      <noinput>
+        <prompt>Je n'ai rien entendu.</prompt>
+        <reprompt/>
+      </noinput>
+      <nomatch>
+        <prompt>Je n'ai pas compris. Répétez ou tapez un chiffre.</prompt>
+        <reprompt/>
+      </nomatch>
+
+      <filled>
+        <if cond="choix_sport == 'retour'">
+          <goto next="#menu_principal"/>
+        <elseif cond="choix_sport == 'football'"/>
+          <goto next="#action_football"/>
+        <elseif cond="choix_sport == 'tennis'"/>
+          <goto next="#action_tennis"/>
+        </if>
+      </filled>
+    </field>
+  </form>
+
+  <!-- ===== Actions (à adapter : lecture d'info, transfert, TTS, etc.) ===== -->
+  <form id="action_football">
+    <block>
+      <prompt>Dernières infos football. Ici vous mettez votre contenu, ou vous transférez l'appel.</prompt>
+      <!-- Exemple transfert : <transfer dest="tel:+33123456789"/> -->
+      <goto next="#menu_sport"/>
+    </block>
+  </form>
+
+  <form id="action_tennis">
+    <block>
+      <prompt>Actu tennis. À vous d'insérer votre logique.</prompt>
+      <goto next="#menu_sport"/>
+    </block>
+  </form>
+
+  <!-- ===== Squelettes des autres rubriques ===== -->
+  <form id="menu_loisir">
+    <block><prompt>Rubrique loisir. (À compléter.)</prompt><goto next="#menu_principal"/></block>
+  </form>
+
+  <form id="menu_sortie">
+    <block><prompt>Rubrique sortie. (À compléter.)</prompt><goto next="#menu_principal"/></block>
+  </form>
+
+  <form id="menu_sante">
+    <block><prompt>Rubrique santé. (À compléter.)</prompt><goto next="#menu_principal"/></block>
+  </form>
+
+  <form id="menu_actu">
+    <block><prompt>Rubrique actualité. (À compléter.)</prompt><goto next="#menu_principal"/></block>
+  </form>
+
+  <!-- ===== Fin / défaut ===== -->
   <form id="fin">
     <block>
-      <prompt bargein="false">
-        HAMLET Le Danemark est une prison. ROSENCRANTZ Alors le monde en est une. HAMLET Une belle prison ; où il y a beaucoup de cachots, de quartiers et de donjons, le Danemark étant l'un des pires. ROSENCRANTZ Nous ne le pensons pas, mon seigneur. HAMLET Eh bien, alors, ce n'en est pas une pour vous ; car il n'y a rien de bon ou de mauvais, mais la pensée le fait ainsi : pour moi c'est une prison. ROSENCRANTZ Pourquoi alors, votre ambition en fait une ; c'est trop étroit pour votre esprit. HAMLET Oh Dieu, je pourrais être enfermé dans une coquille de noix et me considérer comme un roi d'un espace infini, si je n'avais pas de mauvais rêves. GUILDENSTERN Ces rêves sont en effet de l'ambition, car la substance même de l'ambitieux n'est que l'ombre d'un rêve. HAMLET Un rêve lui-même n'est qu'une ombre. ROSENCRANTZ Vraiment, et je considère l'ambition comme d'une qualité si aérienne et légère qu'elle n'est que l'ombre d'une ombre. HAMLET Alors nos mendiants sont des corps, et nos monarques et héros étendus sont les ombres des mendiants. Allons-nous à la cour ? car, par ma foi, je ne peux pas raisonner..
-      </prompt>
+      <prompt>Merci. Au revoir.</prompt>
       <disconnect/>
     </block>
   </form>
 </vxml>
-
