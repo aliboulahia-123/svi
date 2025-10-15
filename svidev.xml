@@ -1,10 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
+
+  <!-- ===== Accueil -> saisie département ===== -->
   <form id="accueil">
     <block>
       <prompt bargein="true">
-        Bienvenue. Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
-        Appuyez sur dièse pour répéter.
+        Bienvenue. Composez le numero de votre departement : deux chiffres pour la metropole, trois pour l outre mer.
+        Appuyez sur dièse pour repeter.
+      </prompt>
+      <goto next="#dept_input"/>
+    </block>
+  </form>
+
+  <form id="dept_input">
+    <field name="dept">
+      <prompt bargein="true">Tapez maintenant le numero du departement.</prompt>
+      <!-- builtin DTMF: 2 a 3 chiffres -->
+      <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
+
+      <noinput><prompt>Je n ai rien entendu. Reessayez.</prompt><reprompt/></noinput>
+      <nomatch><prompt>Entree invalide. Reessayez.</prompt><reprompt/></nomatch>
+
+      <filled>
+        <!-- Corse 2A/2B via 201 / 202 -->
+        <if cond="dept == '201'">
+          <assign name="dept" expr="'2A'"/>
+        <elseif cond="dept == '202'"/>
+          <assign name="dept" expr="'2B'"/>
+        </if>
+
+        <!-- Cas special 92 : deux comites -->
+        <if cond="dept == '92'">
+          <goto next="#choose_92"/>
+        <else/>
+          <goto next="#announce_committee"/>
+        </if>
+      </filled>
+    </field>
+  </form>
+
+  <!-- ===== 92 : choix Nord / Sud ===== -->
+  <form id="choose_92_intro">
+    <block>
+      <prompt>Departement 92. Plusieurs comites existent.</prompt>
+      <goto next="#choose_92"/>
+    </block>
+  </form>
+
+  <menu id="choose_92" dtmf="true">
+    <choice dtmf="1" next="#set_92_nord"><prompt>1 Hauts de Seine Nord</prompt></choice>
+    <choice dtmf="2" next="#set_92_sud"><prompt>2 Hauts de Seine Sud</prompt></choice>
+    <choice dtmf="9" next="#dept_input"><prompt>9 Changer de departement</prompt></choice>
+
+    <noinput><prompt>Pas d entree. Repetez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Repetez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="set_92_nord">
+    <block>
+      <prompt>Vous etes rattache au Comite Hauts de Seine Nord.</prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <form id="set_92_sud">
+    <block>
+      <prompt>Vous etes rattache au Comite Hauts de Seine Sud.</prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <!-- ===== Annonce comité (mapping simple par defaut) ===== -->
+  <form id="announce_committee">
+    <block>
+      <prompt>
+        <if cond="dept == '75'">
+          Vous etes rattache au Comite de Paris.
+        <elseif cond="dept == '971'"/>
+          Vous etes rattache au Comite de Guadeloupe.
+        <elseif cond="dept == '972'"/>
+          Vous etes rattache au Comite de Martinique.
+        <elseif cond="dept == '973'"/>
+          Vous etes rattache au Comite de Guyane.
+        <elseif cond="dept == '974'"/>
+          Vous etes rattache au Comite de La Reunion.
+        <elseif cond="dept == '976'"/>
+          Vous etes rattache au Comite de Mayotte.
+        <else/>
+          Vous etes rattache au Comite du departement <value expr="dept"/>.
+        </if>
+      </prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <!-- ===== TON MENU QUI MARCHE (inchangé) ===== -->
+  <form id="menu_principal_intro">
+    <block>
+      <prompt bargein="true">
+        Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour sante, 5 pour actualite.
+        Appuyez sur dièse pour repeter.
       </prompt>
       <goto next="#menu_principal"/>
     </block>
@@ -14,15 +109,16 @@
     <choice dtmf="1" next="#menu_sport"><prompt>1 pour sport</prompt></choice>
     <choice dtmf="2" next="#loisir"><prompt>2 pour loisir</prompt></choice>
     <choice dtmf="3" next="#sortie"><prompt>3 pour sortie</prompt></choice>
-    <choice dtmf="4" next="#sante"><prompt>4 pour santé</prompt></choice>
-    <choice dtmf="5" next="#actu"><prompt>5 pour actualité</prompt></choice>
+    <choice dtmf="4" next="#sante"><prompt>4 pour sante</prompt></choice>
+    <choice dtmf="5" next="#actu"><prompt>5 pour actualite</prompt></choice>
+    <choice dtmf="9" next="#dept_input"><prompt>9 Changer de departement</prompt></choice>
 
     <noinput>
-      <prompt>Je n'ai rien entendu. Répétez votre choix.</prompt>
+      <prompt>Je n ai rien entendu. Repetez votre choix.</prompt>
       <reprompt/>
     </noinput>
     <nomatch>
-      <prompt>Choix invalide. Répétez votre choix.</prompt>
+      <prompt>Choix invalide. Repetez votre choix.</prompt>
       <reprompt/>
     </nomatch>
   </menu>
@@ -39,13 +135,13 @@
     <choice dtmf="1" next="#football"><prompt>1 football</prompt></choice>
     <choice dtmf="2" next="#tennis"><prompt>2 tennis</prompt></choice>
     <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
-    <noinput><prompt>Pas d'entrée. Répétez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+    <noinput><prompt>Pas d entree. Repetez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Repetez.</prompt><reprompt/></nomatch>
   </menu>
 
   <form id="football">
     <block>
-      <prompt>Dernières infos football. (À remplacer par votre contenu ou un transfert.)</prompt>
+      <prompt>Dernieres infos football. (A remplacer par votre contenu ou un transfert.)</prompt>
       <!-- Exemple transfert : <transfer dest="tel:+33123456789"/> -->
       <goto next="#menu_sport_intro"/>
     </block>
@@ -53,7 +149,7 @@
 
   <form id="tennis">
     <block>
-      <prompt>Actu tennis. (À remplacer par votre contenu.)</prompt>
+      <prompt>Actu tennis. (A remplacer par votre contenu.)</prompt>
       <goto next="#menu_sport_intro"/>
     </block>
   </form>
@@ -61,8 +157,8 @@
   <!-- Squelettes autres rubriques -->
   <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
   <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sante"><block><prompt>Rubrique santé.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="actu"><block><prompt>Rubrique actualité.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="sante"><block><prompt>Rubrique sante.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="actu"><block><prompt>Rubrique actualite.</prompt><goto next="#menu_principal"/></block></form>
 
   <form id="fin"><block><prompt>Merci. Au revoir.</prompt><disconnect/></block></form>
 </vxml>
