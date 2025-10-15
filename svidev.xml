@@ -1,95 +1,271 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
 
-  <!-- ACCUEIL -->
+  <!-- ACCUEIL DÉPARTEMENT (menu plutôt que field) -->
   <form id="accueil">
     <block>
       <prompt bargein="true">
         Bienvenue à l’Association Valentin Haüy.
-        Veuillez composer votre département en deux étapes.
-        D’abord, tapez le premier chiffre parmi 0 à 9.
+        Pour commencer, tapez le code du département :
+        7 pour Paris (75),
+        3 pour Haute-Garonne (31),
+        9 pour Hauts-de-Seine (92)…
+        Puis nous préciserons les unités.
       </prompt>
       <goto next="#menu_dizaine"/>
     </block>
   </form>
 
-  <!-- PREMIER CHIFFRE (dizaine) -->
+  <!-- menu des dizaines -->
   <menu id="menu_dizaine" dtmf="true">
-    <prompt>Choisissez le premier chiffre de votre département : 0 à 9.</prompt>
-    <choice dtmf="0" next="#d1_0"><prompt>0</prompt></choice>
-    <choice dtmf="1" next="#d1_1"><prompt>1</prompt></choice>
-    <choice dtmf="2" next="#d1_2"><prompt>2</prompt></choice>
-    <choice dtmf="3" next="#d1_3"><prompt>3</prompt></choice>
-    <choice dtmf="4" next="#d1_4"><prompt>4</prompt></choice>
-    <choice dtmf="5" next="#d1_5"><prompt>5</prompt></choice>
-    <choice dtmf="6" next="#d1_6"><prompt>6</prompt></choice>
+    <prompt>
+      Premier chiffre du département : 7, 3, 9.
+    </prompt>
     <choice dtmf="7" next="#d1_7"><prompt>7</prompt></choice>
-    <choice dtmf="8" next="#d1_8"><prompt>8</prompt></choice>
+    <choice dtmf="3" next="#d1_3"><prompt>3</prompt></choice>
     <choice dtmf="9" next="#d1_9"><prompt>9</prompt></choice>
     <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
   </menu>
 
-  <!-- DEUXIÈME CHIFFRE (unité) -->
-  <form id="d1_0"><block><prompt>Premier chiffre zéro. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_0"/></block></form>
-  <form id="d1_1"><block><prompt>Premier chiffre un. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_1"/></block></form>
-  <form id="d1_2"><block><prompt>Premier chiffre deux. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_2"/></block></form>
-  <form id="d1_3"><block><prompt>Premier chiffre trois. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_3"/></block></form>
-  <form id="d1_4"><block><prompt>Premier chiffre quatre. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_4"/></block></form>
-  <form id="d1_5"><block><prompt>Premier chiffre cinq. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_5"/></block></form>
-  <form id="d1_6"><block><prompt>Premier chiffre six. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_6"/></block></form>
-  <form id="d1_7"><block><prompt>Premier chiffre sept. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_7"/></block></form>
-  <form id="d1_8"><block><prompt>Premier chiffre huit. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_8"/></block></form>
-  <form id="d1_9"><block><prompt>Premier chiffre neuf. Tapez maintenant le second chiffre.</prompt><goto next="#menu_unite_9"/></block></form>
-
-  <!-- MENUS D’UNITÉS -->
-  <menu id="menu_unite_9" dtmf="true">
-    <prompt>Second chiffre du département (0 à 9).</prompt>
-    <choice dtmf="2" next="#announce_92"><prompt>2</prompt></choice>
-    <choice dtmf="3" next="#announce_93"><prompt>3</prompt></choice>
-    <choice dtmf="4" next="#announce_94"><prompt>4</prompt></choice>
-    <choice dtmf="5" next="#announce_95"><prompt>5</prompt></choice>
-    <choice dtmf="9" next="#announce_99"><prompt>9</prompt></choice>
-    <choice dtmf="0" next="#menu_principal"><prompt>0</prompt></choice>
-    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
-    <nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
-  </menu>
-
-  <form id="announce_92"><block><prompt>Vous êtes dans le département 92, Hauts-de-Seine.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="announce_93"><block><prompt>Vous êtes dans le département 93, Seine-Saint-Denis.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="announce_94"><block><prompt>Vous êtes dans le département 94, Val-de-Marne.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="announce_95"><block><prompt>Vous êtes dans le département 95, Val-d’Oise.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="announce_99"><block><prompt>Département fictif pour test.</prompt><goto next="#menu_principal"/></block></form>
-
-  <!-- MENU PRINCIPAL -->
-  <form id="menu_principal_intro">
+  <!-- chacune des formes pour préciser le second chiffre -->
+  <form id="d1_7">
     <block>
       <prompt>
+        Vous avez tapé 7. Tapez maintenant le second chiffre pour Paris (75) ou autre.
+      </prompt>
+      <goto next="#menu_unite_75"/>
+    </block>
+  </form>
+
+  <form id="d1_3">
+    <block>
+      <prompt>
+        Vous avez tapé 3. Tapez maintenant le second chiffre pour Haute-Garonne (31)…
+      </prompt>
+      <goto next="#menu_unite_31"/>
+    </block>
+  </form>
+
+  <form id="d1_9">
+    <block>
+      <prompt>
+        Vous avez tapé 9. Tapez maintenant le second chiffre pour un département 92.
+      </prompt>
+      <goto next="#menu_unite_92"/>
+    </block>
+  </form>
+
+  <!-- unités / préciser département -->
+  <menu id="menu_unite_75" dtmf="true">
+    <prompt>Tapez 5 pour Paris (75).</prompt>
+    <choice dtmf="5" next="#announce_75"/><noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="announce_75">
+    <block>
+      <prompt>
+        Vous avez indiqué le département 75 — Comité de Paris.
+        Notre comité Paris propose des permanences, des ateliers, des services de matériel adapté.
+        Par exemple : téléphone du comité Paris : 01 40 44 95 94. :contentReference[oaicite:0]{index=0}
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <menu id="menu_unite_31" dtmf="true">
+    <prompt>Tapez 1 pour Haute-Garonne (31).</prompt>
+    <choice dtmf="1" next="#announce_31"/><noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="announce_31">
+    <block>
+      <prompt>
+        Département 31 — Comité de la Haute-Garonne à Toulouse.
+        Adresse : 7 rue Idrac. Tél. 05 61 62 44 45. :contentReference[oaicite:1]{index=1}
+        Services : bien-être, sport, boutique matériel spécialisé, bibliothèque sonore, ateliers, nouvelles technologies. :contentReference[oaicite:2]{index=2}
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <menu id="menu_unite_92" dtmf="true">
+    <prompt>Tapez 2 pour Hauts-de-Seine Sud, ou 1 pour Hauts-de-Seine Nord.</prompt>
+    <choice dtmf="2" next="#announce_92_sud"/><choice dtmf="1" next="#announce_92_nord"/>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput><nomatch><prompt>Invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="announce_92_sud">
+    <block>
+      <prompt>
+        Département 92 Sud — Comité Sud 92.
+        Secrétariat : 2, rue des Écoles, 92330 Sceaux. Tél : 01 55 52 06 06. :contentReference[oaicite:3]{index=3}
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <form id="announce_92_nord">
+    <block>
+      <prompt>
+        Département 92 Nord — (info de démonstration).
+        Ce comité dessert la partie Nord des Hauts-de-Seine.
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <!-- MENU PRINCIPAL (utilise ton menu qui fonctionne) -->
+  <form id="menu_principal_intro">
+    <block>
+      <prompt bargein="true">
         Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
+        Appuyez sur dièse pour répéter.
       </prompt>
       <goto next="#menu_principal"/>
     </block>
   </form>
 
   <menu id="menu_principal" dtmf="true">
-    <prompt>Menu principal. 1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité, 8 changer de département, 9 quitter.</prompt>
-    <choice dtmf="1" next="#sport"><prompt>1 sport</prompt></choice>
-    <choice dtmf="2" next="#loisir"><prompt>2 loisir</prompt></choice>
-    <choice dtmf="3" next="#sortie"><prompt>3 sortie</prompt></choice>
-    <choice dtmf="4" next="#sante"><prompt>4 santé</prompt></choice>
-    <choice dtmf="5" next="#actu"><prompt>5 actualité</prompt></choice>
-    <choice dtmf="8" next="#accueil"><prompt>8 changer de département</prompt></choice>
+    <prompt>Menu principal. 1 sport, 2 loisir, 3 sortie, 4 santé, 5 actualité, 9 quitter.</prompt>
+    <choice dtmf="1" next="#menu_sport_intro"><prompt>1 sport</prompt></choice>
+    <choice dtmf="2" next="#menu_loisir_intro"><prompt>2 loisir</prompt></choice>
+    <choice dtmf="3" next="#menu_sortie_intro"><prompt>3 sortie</prompt></choice>
+    <choice dtmf="4" next="#menu_sante_intro"><prompt>4 santé</prompt></choice>
+    <choice dtmf="5" next="#menu_actu_intro"><prompt>5 actualité</prompt></choice>
     <choice dtmf="9" next="#fin"><prompt>9 quitter</prompt></choice>
+    <noinput><prompt>Pas d’entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
   </menu>
 
-  <!-- RUBRIQUES -->
-  <form id="sport"><block><prompt>Rubrique sport.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="sante"><block><prompt>Rubrique santé.</prompt><goto next="#menu_principal"/></block></form>
-  <form id="actu"><block><prompt>Rubrique actualité.</prompt><goto next="#menu_principal"/></block></form>
+  <!-- Rubriques enrichies avec contenu réel -->
+
+  <form id="menu_sport_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique sport.
+        Exemple : à Paris, l’AVH Paris propose le cécifoot. :contentReference[oaicite:4]{index=4}
+        Tapez 1 pour football, 2 pour tennis, 9 pour retour.
+      </prompt>
+      <goto next="#menu_sport"/>
+    </block>
+  </form>
+
+  <menu id="menu_sport" dtmf="true">
+    <prompt>Sport. 1 football, 2 tennis, 9 retour.</prompt>
+    <choice dtmf="1" next="#sport_football"><prompt>1 football</prompt></choice>
+    <choice dtmf="2" next="#sport_tennis"><prompt>2 tennis</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="sport_football">
+    <block>
+      <prompt>
+        Le club AVH Paris Cécifoot est affilié à la Fédération française handisport. :contentReference[oaicite:5]{index=5}
+      </prompt>
+      <goto next="#menu_sport_intro"/>
+    </block>
+  </form>
+  <form id="sport_tennis">
+    <block>
+      <prompt>
+        (Contenu de démonstration) Actualités tennis AVH.
+      </prompt>
+      <goto next="#menu_sport_intro"/>
+    </block>
+  </form>
+
+  <form id="menu_loisir_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique loisir.
+        L’AVH propose des ateliers, des sorties accessibles.
+        Tapez 1 pour ateliers, 2 pour jeux, 9 pour retour.
+      </prompt>
+      <goto next="#menu_loisir"/>
+    </block>
+  </form>
+  <menu id="menu_loisir" dtmf="true">
+    <prompt>Loisir. 1 ateliers, 2 jeux, 9 retour.</prompt>
+    <choice dtmf="1" next="#loisir_ateliers"><prompt>1 ateliers</prompt></choice>
+    <choice dtmf="2" next="#loisir_jeux"><prompt>2 jeux</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="loisir_ateliers"><block><prompt>Ateliers créatifs, informatiques adaptés, etc.</prompt><goto next="#menu_loisir_intro"/></block></form>
+  <form id="loisir_jeux"><block><prompt>Jeux accessibles et rencontres conviviales.</prompt><goto next="#menu_loisir_intro"/></block></form>
+
+  <form id="menu_sortie_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique sortie.
+        Exemple : à Toulouse, sorties culturelles organisées par le comité Haute-Garonne. :contentReference[oaicite:6]{index=6}
+        Tapez 1 culture, 2 nature, 9 pour retour.
+      </prompt>
+      <goto next="#menu_sortie"/>
+    </block>
+  </form>
+  <menu id="menu_sortie" dtmf="true">
+    <prompt>Sortie. 1 culture, 2 nature, 9 retour.</prompt>
+    <choice dtmf="1" next="#sortie_culture"><prompt>1 culture</prompt></choice>
+    <choice dtmf="2" next="#sortie_nature"><prompt>2 nature</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+  <form id="sortie_culture"><block><prompt>Visites dans les musées accessibles, ex. Musée Valentin Haüy à Paris. :contentReference[oaicite:7]{index=7}</prompt><goto next="#menu_sortie_intro"/></block></form>
+  <form id="sortie_nature"><block><prompt>Balades accessibles dans votre comité local.</prompt><goto next="#menu_sortie_intro"/></block></form>
+
+  <form id="menu_sante_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique santé.
+        Tapez 1 pour conseils santé, 2 pour accompagnement, 9 pour retour.
+      </prompt>
+      <goto next="#menu_sante"/>
+    </block>
+  </form>
+  <menu id="menu_sante" dtmf="true">
+    <prompt>Santé. 1 conseils, 2 accompagnement, 9 retour.</prompt>
+    <choice dtmf="1" next="#sante_conseils"><prompt>1 conseils</prompt></choice>
+    <choice dtmf="2" next="#sante_accompagnement"><prompt>2 accompagnement</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+  <form id="sante_conseils"><block><prompt>Conseils santé, prévention, informations utiles.</prompt><goto next="#menu_sante_intro"/></block></form>
+  <form id="sante_accompagnement"><block><prompt>Accompagnement social, aide aux démarches, orientation.</prompt><goto next="#menu_sante_intro"/></block></form>
+
+  <form id="menu_actu_intro">
+    <block>
+      <prompt>
+        Vous êtes dans la rubrique actualité.
+        Tapez 1 pour actualités locales, 2 pour actualités nationales, 9 pour retour.
+      </prompt>
+      <goto next="#menu_actu"/>
+    </block>
+  </form>
+  <menu id="menu_actu" dtmf="true">
+    <prompt>Actualité. 1 locales, 2 nationales, 9 retour.</prompt>
+    <choice dtmf="1" next="#actu_locale"><prompt>1 locales</prompt></choice>
+    <choice dtmf="2" next="#actu_nationale"><prompt>2 nationales</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+  <form id="actu_locale"><block><prompt>Actualités du comité local (ex. Paris, Haute-Garonne)…</prompt><goto next="#menu_actu_intro"/></block></form>
+  <form id="actu_nationale"><block><prompt>L’association Valentin Haüy est active partout en France depuis 1889. :contentReference[oaicite:8]{index=8}</prompt><goto next="#menu_actu_intro"/></block></form>
 
   <!-- FIN -->
-  <form id="fin"><block><prompt>Merci pour votre appel. Au revoir.</prompt><disconnect/></block></form>
+  <form id="fin">
+    <block>
+      <prompt>Merci pour votre appel. Au revoir.</prompt>
+      <disconnect/>
+    </block>
+  </form>
 
 </vxml>
