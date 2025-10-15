@@ -1,105 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xml:lang="fr-FR">
-  <form id="accueil">
-    <block>
-      <prompt bargein="true">
-        Bienvenue. Pour naviguer, vous pouvez dire le nom de la rubrique,
-        ou taper un chiffre. Les rubriques sont : sport, loisir, sortie, santé, actualité.
-      </prompt>
-      <goto next="#menu_principal"/>
-    </block>
-  </form>
+  <property name="inputmodes" value="voice"/>
+  <property name="timeout" value="6s"/>
+  <property name="confidencelevel" value="0.35"/>
 
-  <!-- ===== MENU PRINCIPAL (voix + DTMF) ===== -->
-  <form id="menu_principal">
-    <field name="rubrique" modal="true">
-      <prompt bargein="true">
-        Dites une rubrique ou tapez :
-        1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
-      </prompt>
+  <form id="t">
+    <field name="choix" modal="true">
+      <prompt bargein="true">Dites l'une de ces rubriques : sport, loisir, sortie, santé, actualité.</prompt>
 
-      <!-- Grammaire VOCALE (SRGS XML) -->
       <grammar xml:lang="fr-FR" mode="voice" root="TOP" type="application/srgs+xml">
         <rule id="TOP" scope="public">
           <one-of>
-            <item> sport <tag>out="sport";</tag></item>
-            <item> loisirs <tag>out="loisir";</tag></item>
-            <item> loisir <tag>out="loisir";</tag></item>
-            <item> sortie <tag>out="sortie";</tag></item>
-            <item> santé <tag>out="sante";</tag></item>
+            <item> sport     <tag>out="sport";</tag></item>
+            <item> loisirs   <tag>out="loisir";</tag></item>
+            <item> loisir    <tag>out="loisir";</tag></item>
+            <item> sortie    <tag>out="sortie";</tag></item>
+            <item> santé     <tag>out="sante";</tag></item>
+            <item> sante     <tag>out="sante";</tag></item>
             <item> actualité <tag>out="actualite";</tag></item>
-            <item> actualités <tag>out="actualite";</tag></item>
-          </one-of>
-        </rule>
-      </grammar>
-
-      <!-- Grammaire DTMF -->
-      <grammar mode="dtmf" root="DTMF" type="application/srgs+xml">
-        <rule id="DTMF" scope="public">
-          <one-of>
-            <item>1<tag>out="sport";</tag></item>
-            <item>2<tag>out="loisir";</tag></item>
-            <item>3<tag>out="sortie";</tag></item>
-            <item>4<tag>out="sante";</tag></item>
-            <item>5<tag>out="actualite";</tag></item>
-          </one-of>
-        </rule>
-      </grammar>
-
-      <noinput>
-        <prompt>Je n'ai rien entendu.</prompt>
-        <reprompt/>
-      </noinput>
-
-      <nomatch>
-        <prompt>Désolé, choix inconnu. Répétez ou tapez un chiffre.</prompt>
-        <reprompt/>
-      </nomatch>
-
-      <filled>
-        <if cond="rubrique == 'sport'">
-          <goto next="#menu_sport"/>
-        <elseif cond="rubrique == 'loisir'"/>
-          <goto next="#menu_loisir"/>
-        <elseif cond="rubrique == 'sortie'"/>
-          <goto next="#menu_sortie"/>
-        <elseif cond="rubrique == 'sante'"/>
-          <goto next="#menu_sante"/>
-        <elseif cond="rubrique == 'actualite'"/>
-          <goto next="#menu_actu"/>
-        <else/>
-          <prompt>Problème de sélection. On reprend.</prompt>
-          <clear namelist="rubrique"/>
-          <reprompt/>
-        </if>
-      </filled>
-    </field>
-  </form>
-
-  <!-- ===== EXEMPLE SOUS-MENU : SPORT ===== -->
-  <form id="menu_sport">
-    <field name="choix_sport" modal="true">
-      <prompt bargein="true">
-        Rubrique sport. Dites football, tennis, ou retour. 
-        Ou tapez 1 pour football, 2 pour tennis, 9 pour retour.
-      </prompt>
-
-      <grammar xml:lang="fr-FR" mode="voice" root="TOP" type="application/srgs+xml">
-        <rule id="TOP" scope="public">
-          <one-of>
-            <item> football <tag>out="football";</tag></item>
-            <item> tennis <tag>out="tennis";</tag></item>
-            <item> retour <tag>out="retour";</tag></item>
-          </one-of>
-        </rule>
-      </grammar>
-
-      <grammar mode="dtmf" root="DTMF" type="application/srgs+xml">
-        <rule id="DTMF" scope="public">
-          <one-of>
-            <item>1<tag>out="football";</tag></item>
-            <item>2<tag>out="tennis";</tag></item>
-            <item>9<tag>out="retour";</tag></item>
+            <item> actualités<tag>out="actualite";</tag></item>
           </one-of>
         </rule>
       </grammar>
@@ -109,60 +28,18 @@
         <reprompt/>
       </noinput>
       <nomatch>
-        <prompt>Je n'ai pas compris. Répétez ou tapez un chiffre.</prompt>
+        <prompt>Je n'ai pas compris. Répétez.</prompt>
         <reprompt/>
       </nomatch>
 
       <filled>
-        <if cond="choix_sport == 'retour'">
-          <goto next="#menu_principal"/>
-        <elseif cond="choix_sport == 'football'"/>
-          <goto next="#action_football"/>
-        <elseif cond="choix_sport == 'tennis'"/>
-          <goto next="#action_tennis"/>
-        </if>
+        <prompt>J'ai compris : <value expr="choix"/>.</prompt>
+        <goto next="#fin"/>
       </filled>
     </field>
   </form>
 
-  <!-- ===== Actions (à adapter : lecture d'info, transfert, TTS, etc.) ===== -->
-  <form id="action_football">
-    <block>
-      <prompt>Dernières infos football. Ici vous mettez votre contenu, ou vous transférez l'appel.</prompt>
-      <!-- Exemple transfert : <transfer dest="tel:+33123456789"/> -->
-      <goto next="#menu_sport"/>
-    </block>
-  </form>
-
-  <form id="action_tennis">
-    <block>
-      <prompt>Actu tennis. À vous d'insérer votre logique.</prompt>
-      <goto next="#menu_sport"/>
-    </block>
-  </form>
-
-  <!-- ===== Squelettes des autres rubriques ===== -->
-  <form id="menu_loisir">
-    <block><prompt>Rubrique loisir. (À compléter.)</prompt><goto next="#menu_principal"/></block>
-  </form>
-
-  <form id="menu_sortie">
-    <block><prompt>Rubrique sortie. (À compléter.)</prompt><goto next="#menu_principal"/></block>
-  </form>
-
-  <form id="menu_sante">
-    <block><prompt>Rubrique santé. (À compléter.)</prompt><goto next="#menu_principal"/></block>
-  </form>
-
-  <form id="menu_actu">
-    <block><prompt>Rubrique actualité. (À compléter.)</prompt><goto next="#menu_principal"/></block>
-  </form>
-
-  <!-- ===== Fin / défaut ===== -->
   <form id="fin">
-    <block>
-      <prompt>Merci. Au revoir.</prompt>
-      <disconnect/>
-    </block>
+    <block><prompt>Test terminé. Au revoir.</prompt><disconnect/></block>
   </form>
 </vxml>
