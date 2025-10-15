@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<vxml version="2.0" xml:lang="fr-FR">
+  <form id="fin">
+    <block>
+      <prompt bargein="false">
+        Cette ligne est dédiée au svi de developpement.
+      </prompt>
+      <disconnect/>
+    </block>
+  </form>
+</vxml>
+
