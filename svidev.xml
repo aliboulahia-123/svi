@@ -1,78 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" xml:lang="fr-FR">
-
-  <!-- FORM 1 : saisie département -->
-  <form id="dept_form">
+<vxml version="2.0" xml:lang="fr-FR">
+  <form id="accueil">
     <block>
       <prompt bargein="true">
-        Bienvenue. Deux chiffres pour la metropole, trois pour l outre mer.
+        Bienvenue. Tapez : 1 pour sport, 2 pour loisir, 3 pour sortie, 4 pour santé, 5 pour actualité.
+        Appuyez sur dièse pour répéter.
       </prompt>
+      <goto next="#menu_principal"/>
     </block>
-
-    <field name="dept">
-      <prompt bargein="true">Tapez maintenant le numero du departement.</prompt>
-      <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
-      <noinput><prompt>Je n ai rien entendu. Reessayez.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entree invalide. Reessayez.</prompt><reprompt/></nomatch>
-
-      <filled>
-        <!-- Normalisation Corse -->
-        <if cond="dept == '201'">
-          <assign name="dept" expr="'2A'"/>
-        <elseif cond="dept == '202'"/>
-          <assign name="dept" expr="'2B'"/>
-        </if>
-
-        <!-- Annonce ICI dans le filled (évite le cut) -->
-        <prompt bargein="true">
-          <if cond="dept == '75'">
-            Vous etes rattache au Comite de Paris.
-          <elseif cond="dept == '971'"/>
-            Vous etes rattache au Comite de Guadeloupe.
-          <else/>
-            Vous etes rattache au Comite du departement <value expr="dept"/>.
-          </if>
-        </prompt>
-
-        <!-- On passe explicitement au form suivant -->
-        <goto next="#menu_form"/>
-      </filled>
-    </field>
   </form>
 
-  <!-- FORM 2 : petit menu -->
-  <form id="menu_form">
-    <field name="menu">
-      <prompt bargein="true">
-        Menu principal. Tapez 1 Activites, 2 Aides techniques, 3 Eole,
-        9 changer de departement, 0 quitter.
-      </prompt>
-      <grammar mode="dtmf" src="builtin:dtmf/digits?length=1"/>
-      <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  <menu id="menu_principal" dtmf="true">
+    <choice dtmf="1" next="#menu_sport"><prompt>1 pour sport</prompt></choice>
+    <choice dtmf="2" next="#loisir"><prompt>2 pour loisir</prompt></choice>
+    <choice dtmf="3" next="#sortie"><prompt>3 pour sortie</prompt></choice>
+    <choice dtmf="4" next="#sante"><prompt>4 pour santé</prompt></choice>
+    <choice dtmf="5" next="#actu"><prompt>5 pour actualité</prompt></choice>
 
-      <filled>
-        <if cond="menu == '1'">
-          <prompt bargein="true">Activites et ateliers.</prompt>
-          <reprompt/>
-        <elseif cond="menu == '2'"/>
-          <prompt bargein="true">Aides techniques.</prompt>
-          <reprompt/>
-        <elseif cond="menu == '3'"/>
-          <prompt bargein="true">Bibliotheque Eole.</prompt>
-          <reprompt/>
-        <elseif cond="menu == '9'"/>
-          <clear namelist="dept menu"/>
-          <goto next="#dept_form"/>
-        <elseif cond="menu == '0'"/>
-          <prompt bargein="true">Merci pour votre appel. Au revoir.</prompt>
-          <disconnect/>
-        <else/>
-          <prompt>Choix non gere. Retour menu.</prompt>
-          <reprompt/>
-        </if>
-      </filled>
-    </field>
+    <noinput>
+      <prompt>Je n'ai rien entendu. Répétez votre choix.</prompt>
+      <reprompt/>
+    </noinput>
+    <nomatch>
+      <prompt>Choix invalide. Répétez votre choix.</prompt>
+      <reprompt/>
+    </nomatch>
+  </menu>
+
+  <!-- Sous-menu SPORT -->
+  <form id="menu_sport_intro">
+    <block>
+      <prompt>Rubrique sport. Tapez 1 pour football, 2 pour tennis, 9 pour retour.</prompt>
+      <goto next="#menu_sport"/>
+    </block>
   </form>
 
+  <menu id="menu_sport" dtmf="true">
+    <choice dtmf="1" next="#football"><prompt>1 football</prompt></choice>
+    <choice dtmf="2" next="#tennis"><prompt>2 tennis</prompt></choice>
+    <choice dtmf="9" next="#menu_principal"><prompt>9 retour</prompt></choice>
+    <noinput><prompt>Pas d'entrée. Répétez.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Invalide. Répétez.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="football">
+    <block>
+      <prompt>Dernières infos football. (À remplacer par votre contenu ou un transfert.)</prompt>
+      <!-- Exemple transfert : <transfer dest="tel:+33123456789"/> -->
+      <goto next="#menu_sport_intro"/>
+    </block>
+  </form>
+
+  <form id="tennis">
+    <block>
+      <prompt>Actu tennis. (À remplacer par votre contenu.)</prompt>
+      <goto next="#menu_sport_intro"/>
+    </block>
+  </form>
+
+  <!-- Squelettes autres rubriques -->
+  <form id="loisir"><block><prompt>Rubrique loisir.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="sortie"><block><prompt>Rubrique sortie.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="sante"><block><prompt>Rubrique santé.</prompt><goto next="#menu_principal"/></block></form>
+  <form id="actu"><block><prompt>Rubrique actualité.</prompt><goto next="#menu_principal"/></block></form>
+
+  <form id="fin"><block><prompt>Merci. Au revoir.</prompt><disconnect/></block></form>
 </vxml>
