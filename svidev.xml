@@ -1,26 +1,360 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" xml:lang="fr-FR">
 
+  <!-- =========================
+       VARS
+       ========================= -->
+  <var name="dept"/>
+  <var name="deptLabel"/>
+  <var name="committee"/>
+  <var name="lastMenu" expr="'#accueil'"/>
+
+  <!-- =========================
+       ACCUEIL
+       ========================= -->
   <form id="accueil">
-    <field name="dept">
-      <prompt>
-        Bienvenue. Composez votre numéro de département à deux chiffres.
+    <block>
+      <prompt bargein="true">
+        Bienvenue à l’Association Valentin Haüy.
+        Composez le numéro de votre département :
+        deux chiffres pour la métropole, ou trois pour l’outre mer.
+        À tout moment : zéro répéter, neuf retour, dièse quitter.
       </prompt>
-      <grammar mode="dtmf" src="builtin:dtmf/digits?length=2"/>
-      <noinput><prompt>Je n'ai rien entendu.</prompt><reprompt/></noinput>
-      <nomatch><prompt>Entrée invalide.</prompt><reprompt/></nomatch>
+      <goto next="#dept_input"/>
+    </block>
+  </form>
+
+  <!-- =========================
+       SAISIE DÉPARTEMENT (builtin DTMF)
+       ========================= -->
+  <form id="dept_input">
+    <field name="dept" modal="true">
+      <prompt bargein="true">
+        Tapez le numéro de département maintenant.
+      </prompt>
+      <!-- Saisie de 2 à 3 chiffres -->
+      <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
+
+      <noinput><prompt>Je n’ai rien entendu. Réessayez.</prompt><reprompt/></noinput>
+      <nomatch><prompt>Entrée invalide. Réessayez.</prompt><reprompt/></nomatch>
+
       <filled>
-        <prompt>
-          Vous êtes dans le comité du département <value expr="dept"/>.
-        </prompt>
-        <goto next="#fin"/>
+        <!-- Corse 2A/2B via 201 et 202 -->
+        <if cond="dept == '201'">
+          <assign name="deptLabel" expr="'2A'"/>
+        <elseif cond="dept == '202'"/>
+          <assign name="deptLabel" expr="'2B'"/>
+        <else/>
+          <assign name="deptLabel" expr="dept"/>
+        </if>
+        <goto next="#resolve_committee"/>
       </filled>
     </field>
   </form>
 
+  <!-- =========================
+       RÉSOLUTION COMITÉ (à compléter selon votre cartographie)
+       ========================= -->
+  <form id="resolve_committee">
+    <block>
+      <!-- Exemples. Remplace/ajoute tes mappings réels. -->
+      <if cond="deptLabel == '75'">
+        <assign name="committee" expr="'Comité de Paris'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '92'"/>
+        <!-- 92 : deux comités → sous-choix -->
+        <goto next="#choose_92"/>
+
+      <elseif cond="deptLabel == '93'"/>
+        <assign name="committee" expr="'Comité de Seine-Saint-Denis'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '94'"/>
+        <assign name="committee" expr="'Comité du Val-de-Marne'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '13'"/>
+        <assign name="committee" expr="'Comité des Bouches-du-Rhône'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '33'"/>
+        <assign name="committee" expr="'Comité de Gironde'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '2A'"/>
+        <assign name="committee" expr="'Comité Corse-du-Sud'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '2B'"/>
+        <assign name="committee" expr="'Comité Haute-Corse'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '971'"/>
+        <assign name="committee" expr="'Comité de Guadeloupe'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '972'"/>
+        <assign name="committee" expr="'Comité de Martinique'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '973'"/>
+        <assign name="committee" expr="'Comité de Guyane'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '974'"/>
+        <assign name="committee" expr="'Comité de La Réunion'"/>
+        <goto next="#announce_committee"/>
+
+      <elseif cond="deptLabel == '976'"/>
+        <assign name="committee" expr="'Comité de Mayotte'"/>
+        <goto next="#announce_committee"/>
+
+      <else/>
+        <assign name="committee" expr="'Comité AVH du département ' + deptLabel"/>
+        <goto next="#announce_committee"/>
+      </if>
+    </block>
+  </form>
+
+  <!-- Cas spécial 92 : sous-choix -->
+  <menu id="choose_92" dtmf="true">
+    <prompt bargein="true">
+      Département quatre vingt douze. Tapez 1 pour Hauts de Seine Nord, 2 pour Hauts de Seine Sud.
+      Zéro répéter, neuf retour, dièse quitter.
+    </prompt>
+    <choice dtmf="1" next="#set_92_nord"><prompt>1 Nord</prompt></choice>
+    <choice dtmf="2" next="#set_92_sud"><prompt>2 Sud</prompt></choice>
+    <choice dtmf="9" next="#dept_input"><prompt>9 Retour</prompt></choice>
+    <choice dtmf="0" next="#choose_92"><prompt>0 Répéter</prompt></choice>
+    <choice dtmf="#" next="#fin"><prompt>Dièse Quitter</prompt></choice>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <form id="set_92_nord">
+    <block><assign name="committee" expr="'Comité Hauts-de-Seine Nord'"/><goto next="#announce_committee"/></block>
+  </form>
+  <form id="set_92_sud">
+    <block><assign name="committee" expr="'Comité Hauts-de-Seine Sud'"/><goto next="#announce_committee"/></block>
+  </form>
+
+  <!-- Annonce du comité -->
+  <form id="announce_committee">
+    <block>
+      <prompt bargein="true">
+        Vous êtes rattaché au {committee}.
+      </prompt>
+      <goto next="#menu_principal_intro"/>
+    </block>
+  </form>
+
+  <!-- =========================
+       MENU PRINCIPAL
+       ========================= -->
+  <form id="menu_principal_intro">
+    <block>
+      <assign name="lastMenu" expr="'#menu_principal_intro'"/>
+      <prompt bargein="true">
+        Menu principal. Tapez :
+        1 Activités et ateliers.
+        2 Sport et loisirs adaptés.
+        3 Aides techniques et matériel.
+        4 Bibliothèque Eole et lecture.
+        5 Accompagnement social et droits.
+        6 Emploi, formation et numérique.
+        7 Culture et sorties accessibles.
+        8 Bénévolat et participation.
+        9 Changer de département.
+        Zéro répéter, dièse quitter.
+      </prompt>
+      <goto next="#menu_principal"/>
+    </block>
+  </form>
+
+  <menu id="menu_principal" dtmf="true">
+    <choice dtmf="1" next="#r_activites"/><choice dtmf="2" next="#r_sport"/>
+    <choice dtmf="3" next="#r_aides"/><choice dtmf="4" next="#r_eole"/>
+    <choice dtmf="5" next="#r_social"/><choice dtmf="6" next="#r_emploi"/>
+    <choice dtmf="7" next="#r_culture"/><choice dtmf="8" next="#r_benevolat"/>
+    <choice dtmf="9" next="#dept_input"/>
+    <choice dtmf="0" next="#menu_principal_intro"/>
+    <choice dtmf="#" next="#fin"/>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  </menu>
+
+  <!-- =========================
+       RUBRIQUES
+       ========================= -->
+  <!-- 1. Activités et ateliers -->
+  <form id="r_activites">
+    <block>
+      <assign name="lastMenu" expr="'#r_activites'"/>
+      <prompt bargein="true">
+        {committee}. Activités et ateliers : vie quotidienne, mobilité, informatique adaptée.
+        Tapez 1 programme détaillé, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_activites_menu"/>
+    </block>
+  </form>
+  <menu id="r_activites_menu" dtmf="true">
+    <choice dtmf="1" next="#r_activites_prog"/>
+    <choice dtmf="9" next="#menu_principal_intro"/>
+    <choice dtmf="0" next="#r_activites"/>
+    <choice dtmf="#" next="#fin"/>
+    <noinput><prompt>Pas d’entrée.</prompt><reprompt/></noinput>
+    <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+  </menu>
+  <form id="r_activites_prog">
+    <block>
+      <prompt bargein="true">
+        Programme mis à jour disponible auprès de l’accueil du comité.
+        9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_activites_menu"/>
+    </block>
+  </form>
+
+  <!-- 2. Sport et loisirs -->
+  <form id="r_sport">
+    <block>
+      <assign name="lastMenu" expr="'#r_sport'"/>
+      <prompt bargein="true">
+        Sport et loisirs adaptés. Tapez 1 sports, 2 loisirs, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_sport_menu"/>
+    </block>
+  </form>
+  <menu id="r_sport_menu" dtmf="true">
+    <choice dtmf="1" next="#r_sport_detail"/>
+    <choice dtmf="2" next="#r_loisirs_detail"/>
+    <choice dtmf="9" next="#menu_principal_intro"/>
+    <choice dtmf="0" next="#r_sport"/>
+    <choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_sport_detail"><block><prompt bargein="true">Exemples : cécifoot, tandem, natation.</prompt><goto next="#r_sport_menu"/></block></form>
+  <form id="r_loisirs_detail"><block><prompt bargein="true">Exemples : clubs de jeux, sorties conviviales.</prompt><goto next="#r_sport_menu"/></block></form>
+
+  <!-- 3. Aides techniques -->
+  <form id="r_aides">
+    <block>
+      <assign name="lastMenu" expr="'#r_aides'"/>
+      <prompt bargein="true">
+        Aides techniques : cannes, loupes, lecteurs Daisy, smartphones.
+        Tapez 1 conseils individuels, 2 démonstrations, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_aides_menu"/>
+    </block>
+  </form>
+  <menu id="r_aides_menu" dtmf="true">
+    <choice dtmf="1" next="#r_aides_conseil"/>
+    <choice dtmf="2" next="#r_aides_demo"/>
+    <choice dtmf="9" next="#menu_principal_intro"/>
+    <choice dtmf="0" next="#r_aides"/>
+    <choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_aides_conseil"><block><prompt bargein="true">Prise de rendez-vous conseillée auprès du comité.</prompt><goto next="#r_aides_menu"/></block></form>
+  <form id="r_aides_demo"><block><prompt bargein="true">Démonstrations au comité, dates selon agenda local.</prompt><goto next="#r_aides_menu"/></block></form>
+
+  <!-- 4. Bibliothèque Eole -->
+  <form id="r_eole">
+    <block>
+      <assign name="lastMenu" expr="'#r_eole'"/>
+      <prompt bargein="true">
+        Bibliothèque Eole : livres audio Daisy, gros caractères, braille.
+        Tapez 1 inscription, 2 emprunt, 3 aide à l’écoute, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_eole_menu"/>
+    </block>
+  </form>
+  <menu id="r_eole_menu" dtmf="true">
+    <choice dtmf="1" next="#r_eole_insc"/><choice dtmf="2" next="#r_eole_emprunt"/><choice dtmf="3" next="#r_eole_aide"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_eole"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_eole_insc"><block><prompt bargein="true">Inscription possible en ligne sur avh point asso point fr, ou via le comité.</prompt><goto next="#r_eole_menu"/></block></form>
+  <form id="r_eole_emprunt"><block><prompt bargein="true">Prêt par téléchargement ou envoi de CD Daisy.</prompt><goto next="#r_eole_menu"/></block></form>
+  <form id="r_eole_aide"><block><prompt bargein="true">Aide à l’utilisation des lecteurs et applications.</prompt><goto next="#r_eole_menu"/></block></form>
+
+  <!-- 5. Social et droits -->
+  <form id="r_social">
+    <block>
+      <assign name="lastMenu" expr="'#r_social'"/>
+      <prompt bargein="true">
+        Accompagnement social et droits : MDPH, mobilité, aides.
+        Tapez 1 être recontacté, 2 permanences, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_social_menu"/>
+    </block>
+  </form>
+  <menu id="r_social_menu" dtmf="true">
+    <choice dtmf="1" next="#r_contact"/><choice dtmf="2" next="#r_permanences"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_social"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_contact"><block><prompt bargein="true">Laissez vos coordonnées à l’accueil du comité pour un rappel.</prompt><goto next="#r_social_menu"/></block></form>
+  <form id="r_permanences"><block><prompt bargein="true">Consultez les horaires des permanences du comité.</prompt><goto next="#r_social_menu"/></block></form>
+
+  <!-- 6. Emploi / Numérique -->
+  <form id="r_emploi">
+    <block>
+      <assign name="lastMenu" expr="'#r_emploi'"/>
+      <prompt bargein="true">
+        Emploi, formation et numérique accessible.
+        Tapez 1 accompagnement vers l’emploi, 2 ateliers numériques, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_emploi_menu"/>
+    </block>
+  </form>
+  <menu id="r_emploi_menu" dtmf="true">
+    <choice dtmf="1" next="#r_emploi_accomp"/><choice dtmf="2" next="#r_emploi_numerique"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_emploi"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_emploi_accomp"><block><prompt bargein="true">Orientation, CV, entretiens, partenariats employeurs.</prompt><goto next="#r_emploi_menu"/></block></form>
+  <form id="r_emploi_numerique"><block><prompt bargein="true">Découverte des lecteurs d’écran et outils d’accessibilité.</prompt><goto next="#r_emploi_menu"/></block></form>
+
+  <!-- 7. Culture -->
+  <form id="r_culture">
+    <block>
+      <assign name="lastMenu" expr="'#r_culture'"/>
+      <prompt bargein="true">
+        Culture et sorties accessibles : audiodescription, visites tactiles.
+        Tapez 1 agenda local, 2 partenaires, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_culture_menu"/>
+    </block>
+  </form>
+  <menu id="r_culture_menu" dtmf="true">
+    <choice dtmf="1" next="#r_agenda"/><choice dtmf="2" next="#r_partenariats"/>
+    <choice dtmf="9" next="#menu_principal_intro"/><choice dtmf="0" next="#r_culture"/><choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_agenda"><block><prompt bargein="true">Agenda disponible sur le site du comité et à l’accueil.</prompt><goto next="#r_culture_menu"/></block></form>
+  <form id="r_partenariats"><block><prompt bargein="true">Musées, théâtres et associations partenaires.</prompt><goto next="#r_culture_menu"/></block></form>
+
+  <!-- 8. Bénévolat -->
+  <form id="r_benevolat">
+    <block>
+      <assign name="lastMenu" expr="'#r_benevolat'"/>
+      <prompt bargein="true">
+        Bénévolat : accompagnement, lecture, ateliers.
+        Tapez 1 proposer votre aide, 9 menu principal, 0 répéter, dièse quitter.
+      </prompt>
+      <goto next="#r_benevolat_menu"/>
+    </block>
+  </form>
+  <menu id="r_benevolat_menu" dtmf="true">
+    <choice dtmf="1" next="#r_benevolat_contact"/>
+    <choice dtmf="9" next="#menu_principal_intro"/>
+    <choice dtmf="0" next="#r_benevolat"/>
+    <choice dtmf="#" next="#fin"/>
+  </menu>
+  <form id="r_benevolat_contact"><block><prompt bargein="true">Merci ! L’accueil du comité vous informera des besoins.</prompt><goto next="#r_benevolat_menu"/></block></form>
+
+  <!-- =========================
+       FIN
+       ========================= -->
   <form id="fin">
     <block>
-      <prompt>Merci pour votre appel. Au revoir.</prompt>
+      <prompt bargein="true">Merci pour votre appel. Au revoir.</prompt>
       <disconnect/>
     </block>
   </form>
