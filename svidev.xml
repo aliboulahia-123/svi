@@ -1,23 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" xml:lang="fr-FR">
   <form id="t">
+
+    <!-- 1) Accueil -->
     <block>
       <prompt bargein="true">
         Bienvenue. Deux chiffres pour la metropole, trois pour l outre mer.
       </prompt>
     </block>
 
+    <!-- 2) Saisie departement -->
     <field name="dept">
       <prompt bargein="true">Tapez maintenant le numero du departement.</prompt>
       <grammar mode="dtmf" src="builtin:dtmf/digits?minlength=2;maxlength=3"/>
-
       <noinput><prompt>Je n ai rien entendu. Reessayez.</prompt><reprompt/></noinput>
       <nomatch><prompt>Entree invalide. Reessayez.</prompt><reprompt/></nomatch>
-
       <filled>
-        <prompt bargein="true">Vous avez saisi <value expr="dept"/>.</prompt>
-        <disconnect/>
+        <!-- Corse 2A/2B via 201 / 202 -->
+        <if cond="dept == '201'">
+          <assign name="dept" expr="'2A'"/>
+        <elseif cond="dept == '202'"/>
+          <assign name="dept" expr="'2B'"/>
+        </if>
       </filled>
     </field>
+
+    <!-- 3) Annonce comité (mapping simple pour demo) -->
+    <block>
+      <prompt bargein="true">
+        <if cond="dept == '75'">
+          Vous etes rattache au Comite de Paris.
+        <elseif cond="dept == '92'"/>
+          Departement 92. Plusieurs comites existent. Par defaut, rattachement Hauts de Seine.
+        <elseif cond="dept == '971'"/>
+          Vous etes rattache au Comite de Guadeloupe.
+        <else/>
+          Vous etes rattache au Comite du departement <value expr="dept"/>.
+        </if>
+      </prompt>
+    </block>
+
+    <!-- 4) Menu principal (mini) -->
+    <field name="menu">
+      <prompt bargein="true">
+        Menu principal. Tapez 1 Activites, 2 Aides techniques, 3 Eole.
+        Tapez 9 pour changer de departement.
+        Tapez 0 pour quitter.
+      </prompt>
+      <grammar mode="dtmf" src="builtin:dtmf/digits?length=1"/>
+      <noinput><prompt>Pas d entree.</prompt><reprompt/></noinput>
+      <nomatch><prompt>Choix invalide.</prompt><reprompt/></nomatch>
+      <filled>
+        <if cond="menu == '1'">
+          <prompt bargein="true">Activites et ateliers. Exemple: vie quotidienne, mobilite, informatique adaptee.</prompt>
+          <reprompt/>
+        <elseif cond="menu == '2'"/>
+          <prompt bargein="true">Aides techniques: cannes, loupes, lecteurs Daisy, smartphones.</prompt>
+          <reprompt/>
+        <elseif cond="menu == '3'"/>
+          <prompt bargein="true">Bibliotheque Eole: livres audio Daisy, gros caracteres, braille.</prompt>
+          <reprompt/>
+        <elseif cond="menu == '9'"/>
+          <!-- Reinitialiser et revenir a la saisie departement -->
+          <clear namelist="dept menu"/>
+          <goto next="#t.dept"/>
+        <elseif cond="menu == '0'"/>
+          <prompt bargein="true">Merci pour votre appel. Au revoir.</prompt>
+          <disconnect/>
+        <else/>
+          <prompt>Choix non gere. Revenir au menu.</prompt>
+          <reprompt/>
+        </if>
+      </filled>
+    </field>
+
   </form>
 </vxml>
